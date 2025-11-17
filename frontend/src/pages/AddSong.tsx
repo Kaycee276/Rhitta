@@ -4,6 +4,7 @@ import { useAccount } from "wagmi";
 import { useToastStore } from "../store/toastStore";
 import { Upload, Music, FileText, ArrowLeft, ArrowRight } from "lucide-react";
 import { Stepper } from "../components/Stepper";
+import { addNotification } from "../utils/notifications";
 
 const AddSong = () => {
 	const { address } = useAccount();
@@ -99,20 +100,27 @@ const AddSong = () => {
 
 		setIsSubmitting(true);
 
+		// Send song data to smart contract
+
 		// Simulate song creation
 		addToast("Song added successfully! NFTs are being minted.", "success");
 		setTimeout(() => {
 			setIsSubmitting(false);
 			navigate("/");
-		}, 30000);
+		}, 3000);
+		addNotification(
+			"Congratulations",
+			`You've added a song succesfully ${formData.title} by ${formData.artist}`,
+			"success"
+		);
 
 		// Add onchain logic
 	};
 
 	if (!address) {
 		return (
-			<div className=" flex items-center justify-center px-4">
-				<div className="text-center space-y-4">
+			<div className=" flex items-center justify-center py-4 px-4">
+				<div className="text-center space-y-4 ">
 					<div className="w-12 h-12 rounded-full bg-(--accent-primary) mx-auto flex items-center justify-center">
 						<Music className="w-6 h-6 " />
 					</div>
