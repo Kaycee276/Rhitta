@@ -24,32 +24,39 @@ async function main() {
 	if (!schemaId) throw new Error("formatSchemaId returned undefined");
 	console.log("Computed Schema ID:", schemaId);
 
-	const schemaEncoder = new SchemaEncoder(schemaId);
+	// const schemaEncoder = new SchemaEncoder(helloSchema);
 	const seen = new Set();
 
-	const normalized = normalizeTo0x(schemaId);
-	if (normalized instanceof Error) throw normalized;
-	const hexSchemaId = normalized as `0x${string}`;
-
-	const allData = await sdk.streams.getAllPublisherDataForSchema(
-		hexSchemaId,
-		publisherWallet
-	);
+	const hexSchemaId = normalizeTo0x(schemaId);
+	const normalizePubKey = normalizeTo0x(publisherWallet);
 
 	setInterval(async () => {
 		const allData = await sdk.streams.getAllPublisherDataForSchema(
-			schemaId,
-			publisherWallet
+			hexSchemaId,
+			normalizePubKey
 		);
+		if (!allData || allData.length === 0) return;
 		for (const dataItem of allData) {
 			let message = "",
 				timestamp = "",
 				sender = "";
 			for (const field of dataItem) {
+				if (typeof field === "string") {
+					continue;
+				}
+
 				const val = field.value?.value ?? field.value;
-				if (field.name === "message") message = val;
-				if (field.name === "timestamp") timestamp = val.toString();
-				if (field.name === "sender") sender = val;
+				const strVal =
+					val === undefined || val === null
+						? ""
+						: typeof val === "string"
+						? val
+						: typeof val === "object"
+						? JSON.stringify(val)
+						: String(val);
+				if (field.name === "message") message = strVal;
+				if (field.name === "timestamp") timestamp = strVal;
+				if (field.name === "sender") sender = strVal;
 			}
 
 			const id = `${timestamp}-${message}`;
