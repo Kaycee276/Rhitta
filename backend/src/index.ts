@@ -1,13 +1,11 @@
+import "./loadEnv.ts";
+import { somniaService } from "./services/somnia/somniaService.ts";
 import express from "express";
 import cors from "cors";
 import http from "http";
 import WebSocket, { WebSocketServer } from "ws";
 import type { IncomingMessage } from "http";
 import type { Request, Response } from "express";
-import dotenv from "dotenv";
-import { somniaService } from "./services/somniaService";
-
-dotenv.config();
 
 const app = express();
 app.use(cors());
@@ -28,7 +26,7 @@ const wss = new WebSocketServer({ server });
 
 wss.on("connection", (ws: WebSocket, req: IncomingMessage) => {
 	// on connect, send recent buffer
-	const buffer = somniaService.getBufferedEvents();
+	const buffer = somniaService.getBuffer("Hello World!");
 	ws.send(JSON.stringify({ type: "buffer", data: buffer }));
 
 	ws.on("message", (msg: WebSocket.RawData) => {
@@ -48,7 +46,7 @@ app.get("/health", (_req: Request, res: Response) =>
 );
 
 app.get("/events", (_req: Request, res: Response) => {
-	res.json(somniaService.getBufferedEvents());
+	res.json(somniaService.getBuffer("Hello World!"));
 });
 
 const PORT = process.env.PORT ? Number(process.env.PORT) : 4000;

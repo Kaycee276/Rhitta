@@ -9,10 +9,8 @@ export interface Song {
 	id: string;
 	title: string;
 	artist: string;
-	ipfsHash: string;
-	creator: string;
-	maxSupply: number;
-	currentSupply: number;
-	price: number;
-	createdAt: number;
+	artistId: string;
+	coverArt?: string;
+	audioUrl: string;
+	genre: string;
 }
