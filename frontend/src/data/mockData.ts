@@ -1,4 +1,4 @@
-import type{ Song, Artist, Playlist } from "../types";
+import type { Song, Playlist } from "../types";
 
 export const mockSongs: Song[] = [
 	{
@@ -117,53 +117,6 @@ export const mockSongs: Song[] = [
 	},
 ];
 
-export const mockArtists: Artist[] = [
-	{
-		id: "artist1",
-		name: "Echo Nova",
-		avatar:
-			"https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=200",
-		bio: "Electronic music producer creating futuristic soundscapes",
-		totalPlays: 21309,
-		totalEarnings: "1.25",
-		followerCount: 1234,
-		songCount: 12,
-	},
-	{
-		id: "artist2",
-		name: "Synth Wave",
-		avatar:
-			"https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=200",
-		bio: "Retro-futuristic synthwave artist",
-		totalPlays: 9876,
-		totalEarnings: "0.89",
-		followerCount: 876,
-		songCount: 8,
-	},
-	{
-		id: "artist3",
-		name: "Space Echo",
-		avatar:
-			"https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=200",
-		bio: "Ambient space music for cosmic journeys",
-		totalPlays: 25110,
-		totalEarnings: "1.56",
-		followerCount: 1567,
-		songCount: 15,
-	},
-	{
-		id: "artist4",
-		name: "Thunder Beats",
-		avatar:
-			"https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=200",
-		bio: "High-energy EDM producer",
-		totalPlays: 11234,
-		totalEarnings: "0.67",
-		followerCount: 654,
-		songCount: 6,
-	},
-];
-
 export const mockPlaylists: Playlist[] = [
 	{
 		id: "playlist1",
@@ -199,3 +152,39 @@ export const mockPlaylists: Playlist[] = [
 		playCount: 12345,
 	},
 ];
+
+// Helper to upsert a song into the mockSongs array. This mutates the exported array so
+// UI that imports `mockSongs` will see updates (works for development/mocks).
+import type { Song as SongType } from "../types";
+
+export function upsertMockSong(
+	partial: Partial<SongType> & { id: string; title?: string }
+) {
+	const idx = mockSongs.findIndex((s) => s.id === partial.id);
+	const nowDate = new Date().toISOString().split("T")[0];
+	const newSong: SongType = {
+		id: partial.id,
+		title: partial.title ?? partial.id,
+		artist: partial.artist ?? "Unknown",
+		artistId: partial.artistId ?? "unknown",
+		duration: typeof partial.duration === "number" ? partial.duration : 0,
+		coverArt: partial.coverArt ?? "",
+		audioUrl: partial.audioUrl ?? "",
+		playCount: typeof partial.playCount === "number" ? partial.playCount : 0,
+		listenerCount:
+			typeof partial.listenerCount === "number" ? partial.listenerCount : 0,
+		price: partial.price ?? "0",
+		nftTokenId: partial.nftTokenId,
+		contractAddress: partial.contractAddress,
+		likes: typeof partial.likes === "number" ? partial.likes : 0,
+		isLiked: typeof partial.isLiked === "boolean" ? partial.isLiked : false,
+		releaseDate: partial.releaseDate ?? nowDate,
+		genre: partial.genre ?? "",
+	};
+
+	if (idx >= 0) {
+		mockSongs[idx] = { ...mockSongs[idx], ...newSong };
+	} else {
+		mockSongs.push(newSong);
+	}
+}

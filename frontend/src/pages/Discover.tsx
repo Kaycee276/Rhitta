@@ -1,9 +1,10 @@
 import { Music, Filter } from "lucide-react";
 import SongCard from "../components/SongCard";
-import { mockSongs } from "../data/mockData";
+import { useSongStore } from "../store/songStore";
 
 const Discover = () => {
 	const genres = ["All", "Electronic", "Synthwave", "Ambient", "EDM"];
+	const songs = useSongStore((s) => s.songs);
 
 	return (
 		<div className="p-8 space-y-8">
@@ -38,7 +39,7 @@ const Discover = () => {
 			<div>
 				<h2 className="text-xl font-semibold mb-4">All Songs</h2>
 				<div className="space-y-2">
-					{mockSongs.map((song) => (
+					{songs.map((song) => (
 						<SongCard key={song.id} song={song} />
 					))}
 				</div>

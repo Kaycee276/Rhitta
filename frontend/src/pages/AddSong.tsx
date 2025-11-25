@@ -5,6 +5,8 @@ import { useToastStore } from "../store/toastStore";
 import { Upload, Music, FileText, ArrowLeft, ArrowRight } from "lucide-react";
 import { Stepper } from "../components/Stepper";
 import { addNotification } from "../utils/notifications";
+import { uploadSong } from "../api/uploadClient";
+import { useSongStore } from "../store/songStore";
 
 const AddSong = () => {
 	const { address } = useAccount();
@@ -101,9 +103,43 @@ const AddSong = () => {
 		setIsSubmitting(true);
 
 		// Send song data to smart contract
+		const id = `song-${Date.now()}`;
 
+		const payload = {
+			id,
+			title: formData.title,
+			artist: formData.artist,
+			artistId: address || "unknown",
+			genre: formData.genre,
+			coverArt: formData.coverArt,
+			coverArtFile: coverFile || undefined,
+			audioUrl: formData.audioUrl,
+			audioFile: audioFile || undefined,
+		};
+
+		const res = await uploadSong(payload);
+		if (res.ok) {
+			addToast("Song added successfully! NFTs are being minted.", "success");
+			console.log("Uploaded song:", res.song);
+			// upsert into the frontend store so UI updates immediately
+			if (res.song) {
+				useSongStore.getState().upsertSong({
+					id: res.song.id,
+					title: res.song.title,
+					artist: res.song.artist,
+					artistId: res.song.artistId,
+					coverArt: res.song.coverArt,
+					audioUrl: res.song.audioUrl,
+					genre: res.song.genre,
+				});
+			}
+		} else {
+			addToast(
+				`Error uploading song: ${res.error || "Unknown error"}`,
+				"error"
+			);
+		}
 		// Simulate song creation
-		addToast("Song added successfully! NFTs are being minted.", "success");
 		setTimeout(() => {
 			setIsSubmitting(false);
 			navigate("/");

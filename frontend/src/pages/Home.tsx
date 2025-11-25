@@ -1,14 +1,17 @@
 import { TrendingUp, Music, Users, Zap } from "lucide-react";
 import SongCard from "../components/SongCard";
-import { mockSongs, mockPlaylists } from "../data/mockData";
+import { mockPlaylists } from "../data/mockData";
+import { useSongStore } from "../store/songStore";
+
 // import { usePlayerStore } from "../store/playerStore";
 
 const Home = () => {
 	// const { addToQueue } = usePlayerStore();
-	const trendingSongs = [...mockSongs]
+	const songs = useSongStore((s) => s.songs);
+	const trendingSongs = [...songs]
 		.sort((a, b) => b.playCount - a.playCount)
 		.slice(0, 6);
-	const recentSongs = [...mockSongs].slice(0, 6);
+	const recentSongs = [...songs].slice(0, 6);
 
 	return (
 		<div className="p-8 space-y-8">
@@ -35,7 +38,7 @@ const Home = () => {
 						<Music className="w-5 h-5 text-(--accent-primary)" />
 						<span className="text-sm text-(--text-secondary)">Total Songs</span>
 					</div>
-					<p className="text-2xl font-bold">{mockSongs.length}</p>
+					<p className="text-2xl font-bold">{songs.length}</p>
 				</div>
 				<div className="bg-(--bg-secondary) p-6 rounded-lg border border-(--border)">
 					<div className="flex items-center gap-3 mb-2">
@@ -43,7 +46,7 @@ const Home = () => {
 						<span className="text-sm text-(--text-secondary)">Total Plays</span>
 					</div>
 					<p className="text-2xl font-bold">
-						{mockSongs
+						{songs
 							.reduce((sum, song) => sum + song.playCount, 0)
 							.toLocaleString()}
 					</p>
@@ -56,7 +59,7 @@ const Home = () => {
 						</span>
 					</div>
 					<p className="text-2xl font-bold">
-						{mockSongs.reduce((sum, song) => sum + song.listenerCount, 0)}
+						{songs.reduce((sum, song) => sum + song.listenerCount, 0)}
 					</p>
 				</div>
 				<div className="bg-(--bg-secondary) p-6 rounded-lg border border-(--border)">

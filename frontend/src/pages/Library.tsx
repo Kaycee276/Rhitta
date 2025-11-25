@@ -1,9 +1,10 @@
 import { BookOpen, Heart, Music } from "lucide-react";
 import SongCard from "../components/SongCard";
-import { mockSongs } from "../data/mockData";
+import { useSongStore } from "../store/songStore";
 
 const Library = () => {
-	const likedSongs = mockSongs.filter((song) => song.isLiked);
+	const songs = useSongStore((s) => s.songs);
+	const likedSongs = songs.filter((song) => song.isLiked);
 
 	return (
 		<div className="p-8 space-y-8">
@@ -41,11 +42,11 @@ const Library = () => {
 					<Music className="w-6 h-6 text-(--accent-primary)" />
 					<h2 className="text-2xl font-bold">All Songs</h2>
 					<span className="text-sm text-(--text-secondary)">
-						({mockSongs.length} songs)
+						({songs.length} songs)
 					</span>
 				</div>
 				<div className="space-y-2">
-					{mockSongs.map((song) => (
+					{songs.map((song) => (
 						<SongCard key={song.id} song={song} />
 					))}
 				</div>

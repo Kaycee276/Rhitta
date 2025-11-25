@@ -1,13 +1,14 @@
 import { TrendingUp, Flame, Clock } from "lucide-react";
 import SongCard from "../components/SongCard";
-import { mockSongs } from "../data/mockData";
+import { useSongStore } from "../store/songStore";
 
 const Trending = () => {
-	const trendingSongs = [...mockSongs]
+	const songs = useSongStore((s) => s.songs);
+	const trendingSongs = [...songs]
 		.sort((a, b) => b.playCount - a.playCount)
 		.map((song, index) => ({ ...song, rank: index + 1 }));
 
-	const hotSongs = [...mockSongs]
+	const hotSongs = [...songs]
 		.sort((a, b) => b.listenerCount - a.listenerCount)
 		.slice(0, 5);
 

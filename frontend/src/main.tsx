@@ -1,13 +1,15 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "@rainbow-me/rainbowkit/styles.css";
-
+import { Buffer } from "buffer";
 import "./index.css";
 import App from "./App.tsx";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { WagmiProvider } from "wagmi";
 import { RainbowKitProvider } from "@rainbow-me/rainbowkit";
 import { config } from "./components/WalletProvider";
+
+window.Buffer = Buffer;
 
 const queryClient = new QueryClient();
 

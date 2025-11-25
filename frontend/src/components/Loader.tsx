@@ -16,7 +16,7 @@ const Loader = () => {
 					{[0, 1, 2].map((index) => (
 						<motion.div
 							key={index}
-							className="w-2 h-2 bg-(--accent-primary) rounded-full"
+							className="w-2 h-2 bg-(--accent-primary) "
 							animate={{
 								y: [0, -8, 0],
 								opacity: [0.5, 1, 0.5],

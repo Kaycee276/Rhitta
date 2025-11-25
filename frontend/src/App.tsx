@@ -1,4 +1,4 @@
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Header from "./components/Header";
 import Sidebar from "./components/Sidebar";
@@ -7,6 +7,11 @@ import Loader from "./components/Loader";
 import Toast from "./components/Toast";
 import { usePlayerStore } from "./store/playerStore";
 import { useToastStore } from "./store/toastStore";
+
+import {
+	startEventsSubscription,
+	stopEventsSubscription,
+} from "./services/eventsSubscriber";
 
 // Lazy load page components
 const Home = lazy(() => import("./pages/Home"));
@@ -18,6 +23,13 @@ const AddSong = lazy(() => import("./pages/AddSong"));
 const App = () => {
 	const { playerState } = usePlayerStore();
 	const { toasts, removeToast } = useToastStore();
+
+	useEffect(() => {
+		startEventsSubscription({intervalMs:5000});
+		return () => {
+			stopEventsSubscription();
+		};
+	}, []);
 
 	return (
 		<Router>
