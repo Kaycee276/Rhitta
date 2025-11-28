@@ -13,6 +13,7 @@ import { useEffect } from "react";
 import { usePlayerStore } from "../store/playerStore";
 import { formatTime } from "../utils/formatTime";
 import { useWebAudioPlayer } from "../hooks/useWebAudioPlayer";
+import { playUrl } from "../utils/playUrl";
 
 const MusicPlayer = () => {
 	const { audioRef } = useWebAudioPlayer({
@@ -45,13 +46,30 @@ const MusicPlayer = () => {
 
 	useEffect(() => {
 		if (!audioRef.current) return;
-		audioRef.current.load();
-		if (playerState.isPlaying) {
-			audioRef.current.play().catch(console.error);
-		} else {
-			audioRef.current.pause();
-		}
-	}, [playerState.isPlaying, playerState.currentSong]);
+		const audio = audioRef.current;
+		let canceled = false;
+
+		(async () => {
+			try {
+				await playUrl(audio, playerState.currentSong!.audioUrl, {
+					timeoutMs: 10000,
+				});
+				if (canceled) return;
+				if (playerState.isPlaying) {
+					await audio.play().catch(() => {
+						/* handle or ignore AbortError */
+					});
+				}
+			} catch (err) {
+				console.error("Failed to start playback:", err);
+				// fallback behavior here (e.g., show error to user or try proxy)
+			}
+		})();
+
+		return () => {
+			canceled = true;
+		};
+	}, [playerState.currentSong]);
 
 	useEffect(() => {
 		if (audioRef.current) {
