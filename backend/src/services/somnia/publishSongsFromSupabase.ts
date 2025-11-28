@@ -56,4 +56,4 @@ export async function markSongAsPublished(songId: string) {
 	}
 }
 
-publishAllSongsFromSupabase();
+// publishAllSongsFromSupabase();
