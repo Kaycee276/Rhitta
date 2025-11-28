@@ -34,9 +34,12 @@ export type ReceivedSong = {
 
 export type UploadResponse = {
 	ok: boolean;
+	success?: boolean;
 	total: number;
 	song?: ReceivedSong;
+	data?: ReceivedSong;
 	error?: string;
+	message?: string;
 };
 
 const DEFAULT_BASE =
@@ -46,11 +49,6 @@ function getBase(baseUrl?: string) {
 	return baseUrl || DEFAULT_BASE;
 }
 
-/**
- * Upload a song payload to backend `/new-upload`.
- * If either coverArtFile or audioFile is provided, a multipart/form-data request is used.
- * Otherwise a JSON body is sent.
- */
 export async function uploadSong(
 	payload: UploadPayload,
 	options?: { baseUrl?: string; signal?: AbortSignal }
@@ -60,59 +58,73 @@ export async function uploadSong(
 
 	const hasFiles = !!(payload.coverArtFile || payload.audioFile);
 
-	if (hasFiles) {
-		const fd = new FormData();
-		// append string fields
-		fd.append("id", payload.id);
-		if (payload.title) fd.append("title", String(payload.title));
-		if (payload.artist) fd.append("artist", String(payload.artist));
-		if (payload.artistId) fd.append("artistId", String(payload.artistId));
-		if (payload.genre) fd.append("genre", String(payload.genre));
-		// prefer file fields (the backend will use uploaded file if present)
-		if (payload.coverArtFile)
-			fd.append(
-				"coverArtFile",
-				payload.coverArtFile,
-				(payload.coverArtFile as File).name
-			);
-		else if (payload.coverArt) fd.append("coverArt", String(payload.coverArt));
+	try {
+		let res: Response;
+		if (hasFiles) {
+			const fd = new FormData();
+			// append string fields
+			fd.append("id", payload.id);
+			if (payload.title) fd.append("title", String(payload.title));
+			if (payload.artist) fd.append("artist", String(payload.artist));
+			if (payload.artistId) fd.append("artistId", String(payload.artistId));
+			if (payload.genre) fd.append("genre", String(payload.genre));
+			// receive just files
+			if (payload.coverArtFile)
+				fd.append(
+					"coverArtFile",
+					payload.coverArtFile,
+					payload.coverArtFile.name
+				);
+			if (payload.audioFile)
+				fd.append("audioFile", payload.audioFile, payload.audioFile.name);
 
-		if (payload.audioFile)
-			fd.append(
-				"audioFile",
-				payload.audioFile,
-				(payload.audioFile as File).name
-			);
-		else if (payload.audioUrl) fd.append("audioUrl", String(payload.audioUrl));
+			res = await fetch(url, {
+				method: "POST",
+				body: fd,
+				signal: options?.signal,
+			});
+			const json = await res.json();
+			return json as UploadResponse;
+		} else {
+			const body: Record<string, unknown> = {
+				id: payload.id,
+			};
+			if (payload.title) body.title = payload.title;
+			if (payload.artist) body.artist = payload.artist;
+			if (payload.artistId) body.artistId = payload.artistId;
+			if (payload.genre) body.genre = payload.genre;
+			if (payload.coverArt) body.coverArt = payload.coverArt;
+			if (payload.audioUrl) body.audioUrl = payload.audioUrl;
 
-		const res = await fetch(url, {
-			method: "POST",
-			body: fd,
-			signal: options?.signal,
-		});
-		const json = await res.json();
-		return json as UploadResponse;
+			res = await fetch(url, {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify(body),
+				signal: options?.signal,
+			});
+			if (!res.ok) {
+				const errorText = await res.text();
+				console.error("Backend error response:", errorText);
+				return {
+					ok: false,
+					total: 0,
+					error: `Upload failed: ${res.status} ${res.statusText}`,
+				};
+			}
+
+			const json = await res.json();
+			return json as UploadResponse;
+		}
+	} catch (error) {
+		console.error("Network error:", error);
+		return {
+			ok: false,
+			total: 0,
+			error: `Network error: ${
+				error instanceof Error ? error.message : "Unknown error"
+			}`,
+		};
 	}
-
-	// JSON path
-	const body: Record<string, unknown> = {
-		id: payload.id,
-	};
-	if (payload.title) body.title = payload.title;
-	if (payload.artist) body.artist = payload.artist;
-	if (payload.artistId) body.artistId = payload.artistId;
-	if (payload.genre) body.genre = payload.genre;
-	if (payload.coverArt) body.coverArt = payload.coverArt;
-	if (payload.audioUrl) body.audioUrl = payload.audioUrl;
-
-	const res = await fetch(url, {
-		method: "POST",
-		headers: { "Content-Type": "application/json" },
-		body: JSON.stringify(body),
-		signal: options?.signal,
-	});
-	const json = await res.json();
-	return json as UploadResponse;
 }
 
 export async function getEvents(options?: {

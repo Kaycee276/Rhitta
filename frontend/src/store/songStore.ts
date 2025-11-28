@@ -21,9 +21,10 @@ export const useSongStore = create<SongState>((set, get) => ({
 			title: partial.title ?? partial.id,
 			artist: partial.artist ?? "Unknown",
 			artistId: partial.artistId ?? "unknown",
-			duration: typeof partial.duration === "number" ? partial.duration : 0,
 			coverArt: partial.coverArt ?? "",
+			duration: typeof partial.duration === "number" ? partial.duration : 0,
 			audioUrl: partial.audioUrl ?? "",
+			genre: partial.genre ?? "",
 			playCount: typeof partial.playCount === "number" ? partial.playCount : 0,
 			listenerCount:
 				typeof partial.listenerCount === "number" ? partial.listenerCount : 0,
@@ -33,7 +34,6 @@ export const useSongStore = create<SongState>((set, get) => ({
 			likes: typeof partial.likes === "number" ? partial.likes : 0,
 			isLiked: typeof partial.isLiked === "boolean" ? partial.isLiked : false,
 			releaseDate: partial.releaseDate ?? nowDate,
-			genre: partial.genre ?? "",
 		};
 
 		if (idx >= 0) {

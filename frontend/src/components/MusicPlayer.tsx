@@ -9,12 +9,24 @@ import {
 	Heart,
 	MoreHorizontal,
 } from "lucide-react";
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { usePlayerStore } from "../store/playerStore";
 import { formatTime } from "../utils/formatTime";
+import { useWebAudioPlayer } from "../hooks/useWebAudioPlayer";
 
 const MusicPlayer = () => {
-	const audioRef = useRef<HTMLAudioElement>(null);
+	const { audioRef } = useWebAudioPlayer({
+		onEnded: () => {
+			if (audioRef.current) {
+				if (playerState.repeat === "one") {
+					audioRef.current.currentTime = 0;
+					audioRef.current.play().catch(console.error);
+					return;
+				}
+			}
+			nextSong();
+		},
+	});
 	const {
 		playerState,
 		togglePlayPause,
@@ -33,6 +45,7 @@ const MusicPlayer = () => {
 
 	useEffect(() => {
 		if (!audioRef.current) return;
+		audioRef.current.load();
 		if (playerState.isPlaying) {
 			audioRef.current.play().catch(console.error);
 		} else {
@@ -46,31 +59,8 @@ const MusicPlayer = () => {
 		}
 	}, [playerState.volume]);
 
-	useEffect(() => {
-		const audio = audioRef.current;
-		if (!audio) return;
-
-		const updateTime = () => {
-			setCurrentTime(audio.currentTime);
-		};
-
-		const handleEnded = () => {
-			if (playerState.repeat === "one") {
-				audio.currentTime = 0;
-				audio.play();
-				return;
-			}
-			nextSong();
-		};
-
-		audio.addEventListener("timeupdate", updateTime);
-		audio.addEventListener("ended", handleEnded);
-
-		return () => {
-			audio.removeEventListener("timeupdate", updateTime);
-			audio.removeEventListener("ended", handleEnded);
-		};
-	}, [nextSong, setCurrentTime, playerState.repeat]);
+	// Note: timeupdate is handled by useWebAudioPlayer; ended behavior is provided
+	// to the hook via the onEnded callback passed above, so we don't add listeners here.
 
 	const hasSong = Boolean(playerState.currentSong);
 
@@ -87,7 +77,13 @@ const MusicPlayer = () => {
 
 	return (
 		<div className="fixed  left-0 right-0 bg-(--bg-secondary) border-t border-(--border) z-50 bottom-[80px] md:bottom-0 ">
-			<audio ref={audioRef} src={playerState.currentSong?.audioUrl} />
+			<audio
+				ref={audioRef}
+				src={playerState.currentSong?.audioUrl}
+				preload="auto"
+				crossOrigin="anonymous"
+				// controls={false}
+			/>
 			{/* Progress Bar */}
 			<div className="h-1 bg-(--bg-tertiary) cursor-pointer group">
 				<div

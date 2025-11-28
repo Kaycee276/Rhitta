@@ -1,10 +1,11 @@
 import { getDefaultConfig } from "@rainbow-me/rainbowkit";
+import { addNotification } from "../utils/notifications";
 
 import { somniaTestnet } from "wagmi/chains";
 
 const projectId = import.meta.env.VITE_PROJECT_ID;
 if (!projectId) {
-	console.log("Please provide a project Id");
+	addNotification("Please provide a project Id", "error");
 }
 
 export const config = getDefaultConfig({

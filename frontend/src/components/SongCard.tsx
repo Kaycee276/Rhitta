@@ -4,7 +4,6 @@ import type { Song } from "../types";
 import { usePlayerStore } from "../store/playerStore";
 import { formatTime } from "../utils/formatTime";
 import RealTimeListenerCount from "./RealTimeListenerCount";
-// import { addNotification } from "../utils/notifications";
 
 interface SongCardProps {
 	song: Song;
@@ -19,6 +18,7 @@ const SongCard = ({
 }: SongCardProps) => {
 	const { playSong, playerState } = usePlayerStore();
 	const isCurrentlyPlaying = playerState.currentSong?.id === song.id;
+
 	const bounceDots = [0, 1, 2];
 
 	const handlePlay = () => {
@@ -81,7 +81,9 @@ const SongCard = ({
 				{showPlayCount && (
 					<div className="flex items-center gap-4 mt-1 text-xs text-(--text-tertiary)">
 						<span>{song.playCount.toLocaleString()} plays</span>
-						{showListenerCount && <RealTimeListenerCount songId={song.id} />}
+						{showListenerCount && (
+							<RealTimeListenerCount listeners={song.listenerCount} />
+						)}
 					</div>
 				)}
 			</div>

@@ -1,9 +1,11 @@
-import { TrendingUp, Music, Users, Zap } from "lucide-react";
+import { TrendingUp, Music, Zap } from "lucide-react";
 import SongCard from "../components/SongCard";
+import SongCardSkeleton from "../components/SongCardSkeleton";
 import { mockPlaylists } from "../data/mockData";
 import { useSongStore } from "../store/songStore";
 
 // import { usePlayerStore } from "../store/playerStore";
+// import { TestComponent } from "../components/testComponent";
 
 const Home = () => {
 	// const { addToQueue } = usePlayerStore();
@@ -30,9 +32,10 @@ const Home = () => {
 					</div>
 				</div>
 			</div>
+			{/* <TestComponent /> */}
 
 			{/* Stats */}
-			<div className="grid-cols-1 md:grid-cols-4 gap-4 hidden md:grid">
+			{/* <div className="grid-cols-1 md:grid-cols-4 gap-4 hidden md:grid">
 				<div className="bg-(--bg-secondary) p-6 rounded-lg border border-(--border)">
 					<div className="flex items-center gap-3 mb-2">
 						<Music className="w-5 h-5 text-(--accent-primary)" />
@@ -69,7 +72,7 @@ const Home = () => {
 					</div>
 					<p className="text-2xl font-bold">{mockPlaylists.length}</p>
 				</div>
-			</div>
+			</div> */}
 
 			{/* Trending Now */}
 			<div>
@@ -78,14 +81,16 @@ const Home = () => {
 						<TrendingUp className="w-6 h-6 text-(--accent-primary)" />
 						Trending Now
 					</h2>
-					<button className="text-sm text-(--accent-primary) hover:underline">
+					{/* <button className="text-sm text-(--accent-primary) hover:underline">
 						See all
-					</button>
+					</button> */}
 				</div>
 				<div className="space-y-2">
-					{trendingSongs.map((song) => (
-						<SongCard key={song.id} song={song} />
-					))}
+					{trendingSongs.length === 0 ? (
+						<SongCardSkeleton />
+					) : (
+						trendingSongs.map((song) => <SongCard key={song.id} song={song} />)
+					)}
 				</div>
 			</div>
 
@@ -96,14 +101,16 @@ const Home = () => {
 						<Music className="w-6 h-6 text-(--accent-primary)" />
 						Recently Added
 					</h2>
-					<button className="text-sm text-(--accent-primary) hover:underline">
+					{/* <button className="text-sm text-(--accent-primary) hover:underline">
 						See all
-					</button>
+					</button> */}
 				</div>
 				<div className="space-y-2">
-					{recentSongs.map((song) => (
-						<SongCard key={song.id} song={song} />
-					))}
+					{recentSongs.length === 0 ? (
+						<SongCardSkeleton />
+					) : (
+						recentSongs.map((song) => <SongCard key={song.id} song={song} />)
+					)}
 				</div>
 			</div>
 

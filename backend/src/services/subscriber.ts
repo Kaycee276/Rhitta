@@ -2,7 +2,7 @@ import "../loadEnv.ts";
 import formatSchemaId from "../utils/formatSchemaId.ts";
 import { normalizeTo0x } from "../utils/hex.ts";
 import { dreamChain } from "./dream-chain.ts";
-import { SDK, SchemaEncoder } from "@somnia-chain/streams";
+import { SDK } from "@somnia-chain/streams";
 import { createPublicClient, http } from "viem";
 
 async function main() {

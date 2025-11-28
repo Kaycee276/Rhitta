@@ -1,5 +1,6 @@
 import { Music, Filter } from "lucide-react";
 import SongCard from "../components/SongCard";
+import SongCardSkeleton from "../components/SongCardSkeleton";
 import { useSongStore } from "../store/songStore";
 
 const Discover = () => {
@@ -39,9 +40,11 @@ const Discover = () => {
 			<div>
 				<h2 className="text-xl font-semibold mb-4">All Songs</h2>
 				<div className="space-y-2">
-					{songs.map((song) => (
-						<SongCard key={song.id} song={song} />
-					))}
+					{songs.length === 0 ? (
+						<SongCardSkeleton />
+					) : (
+						songs.map((song) => <SongCard key={song.id} song={song} />)
+					)}
 				</div>
 			</div>
 		</div>

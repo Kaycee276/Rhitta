@@ -1,5 +1,6 @@
 import { BookOpen, Heart, Music } from "lucide-react";
 import SongCard from "../components/SongCard";
+import SongCardSkeleton from "../components/SongCardSkeleton";
 import { useSongStore } from "../store/songStore";
 
 const Library = () => {
@@ -31,7 +32,7 @@ const Library = () => {
 				) : (
 					<div className="text-center py-12 text-(--text-secondary)">
 						<Heart className="w-12 h-12 mx-auto mb-4 opacity-50" />
-						<p>No liked songs yet. Start liking songs to see them here!</p>
+						<p>This feature is not yet available </p>
 					</div>
 				)}
 			</div>
@@ -46,9 +47,11 @@ const Library = () => {
 					</span>
 				</div>
 				<div className="space-y-2">
-					{songs.map((song) => (
-						<SongCard key={song.id} song={song} />
-					))}
+					{songs.length === 0 ? (
+						<SongCardSkeleton />
+					) : (
+						songs.map((song) => <SongCard key={song.id} song={song} />)
+					)}
 				</div>
 			</div>
 		</div>

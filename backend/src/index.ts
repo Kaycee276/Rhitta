@@ -1,5 +1,6 @@
 import "./loadEnv.ts";
 import uploadRoutes from "./routes/upload.ts";
+import publish from "./routes/publish.ts";
 import express from "express";
 import cors from "cors";
 import http from "http";
@@ -12,6 +13,7 @@ app.use(express.json());
 const server = http.createServer(app);
 
 app.use("/", uploadRoutes);
+app.use("/", publish);
 
 app.get("/health", (_req: Request, res: Response) =>
 	res.json({ status: "ok" })

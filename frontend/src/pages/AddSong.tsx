@@ -102,55 +102,57 @@ const AddSong = () => {
 
 		setIsSubmitting(true);
 
-		// Send song data to smart contract
-		const id = `song-${Date.now()}`;
+		try {
+			const id = `song-${Date.now()}`;
 
-		const payload = {
-			id,
-			title: formData.title,
-			artist: formData.artist,
-			artistId: address || "unknown",
-			genre: formData.genre,
-			coverArt: formData.coverArt,
-			coverArtFile: coverFile || undefined,
-			audioUrl: formData.audioUrl,
-			audioFile: audioFile || undefined,
-		};
+			const payload = {
+				id,
+				title: formData.title,
+				artist: formData.artist,
+				artistId: address || "unknown",
+				genre: formData.genre,
+				coverArt: formData.coverArt,
+				coverArtFile: coverFile || undefined,
+				audioUrl: formData.audioUrl,
+				audioFile: audioFile || undefined,
+			};
 
-		const res = await uploadSong(payload);
-		if (res.ok) {
-			addToast("Song added successfully! NFTs are being minted.", "success");
-			console.log("Uploaded song:", res.song);
-			// upsert into the frontend store so UI updates immediately
-			if (res.song) {
-				useSongStore.getState().upsertSong({
-					id: res.song.id,
-					title: res.song.title,
-					artist: res.song.artist,
-					artistId: res.song.artistId,
-					coverArt: res.song.coverArt,
-					audioUrl: res.song.audioUrl,
-					genre: res.song.genre,
-				});
+			const res = await uploadSong(payload);
+
+			if (res.ok && res.success) {
+				addToast("Song added successfully! NFTs are being minted.", "success");
+
+				const songData = res.data || res.song;
+				if (songData) {
+					useSongStore.getState().upsertSong({
+						id: songData.id,
+						title: songData.title,
+						artist: songData.artist,
+						artistId: songData.artistId,
+						coverArt: songData.coverArt,
+						audioUrl: songData.audioUrl,
+						genre: songData.genre,
+					});
+				}
+
+				addNotification(
+					"Congratulations",
+					`You've added a song successfully: ${formData.title} by ${formData.artist}`,
+					"success"
+				);
+
+				navigate("/");
+			} else {
+				const errorMessage = res.error || "Unknown error occurred";
+				addToast(`Error uploading song: ${errorMessage}`, "error");
+				console.error("Upload failed:", res);
 			}
-		} else {
-			addToast(
-				`Error uploading song: ${res.error || "Unknown error"}`,
-				"error"
-			);
-		}
-		// Simulate song creation
-		setTimeout(() => {
+		} catch (error) {
+			console.error("Upload error:", error);
+			addToast("Network error: Failed to upload song", "error");
+		} finally {
 			setIsSubmitting(false);
-			navigate("/");
-		}, 3000);
-		addNotification(
-			"Congratulations",
-			`You've added a song succesfully ${formData.title} by ${formData.artist}`,
-			"success"
-		);
-
-		// Add onchain logic
+		}
 	};
 
 	if (!address) {
@@ -272,7 +274,7 @@ const AddSong = () => {
 						<div className=" rounded-2xl border border-(--border) p-8 space-y-6 animate-in fade-in duration-300">
 							<h2 className="text-xl font-semibold flex items-center gap-2">
 								<Upload className="w-5 h-5 text-(--accent-primary)" />
-								Media Files
+								Media Files (Max 10mb each )
 							</h2>
 
 							<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -281,19 +283,12 @@ const AddSong = () => {
 									<label className="block text-sm font-medium text-(--text-secondary) mb-2">
 										Cover Art
 									</label>
-									<input
-										type="url"
-										name="coverArt"
-										value={formData.coverArt}
-										onChange={handleInputChange}
-										placeholder="https://..."
-										className="w-full px-4 py-3 bg-(--bg-tertiary) border border-(--border) rounded-xl text-(--text) placeholder:text-(--text-tertiary) focus:outline-none focus:ring-2 focus:ring-(--accent-primary) mb-3"
-									/>
+
 									<label className="block">
 										<div className="relative cursor-pointer">
 											<div className="px-4 py-2 border-2 border-dashed border-(--border) rounded-lg text-center transition">
 												<span className="text-sm text-(--text-secondary)">
-													Or upload image
+													upload an image file
 												</span>
 											</div>
 											<input
@@ -316,19 +311,12 @@ const AddSong = () => {
 									<label className="block text-sm font-medium text-(--text-secondary) mb-2">
 										Audio File
 									</label>
-									<input
-										type="url"
-										name="audioUrl"
-										value={formData.audioUrl}
-										onChange={handleInputChange}
-										placeholder="https://..."
-										className="w-full px-4 py-3 bg-(--bg-tertiary) border border-(--border) rounded-xl text-(--text) placeholder:text-(--text-tertiary) focus:outline-none focus:ring-2 focus:ring-(--accent-primary) mb-3"
-									/>
+
 									<label className="block">
 										<div className="relative cursor-pointer">
 											<div className="px-4 py-2 border-2 border-dashed border-(--border) rounded-lg text-center transition">
-												<span className="text-sm text-slate-300">
-													Or upload audio
+												<span className="text-sm text-(--text-secondary)">
+													upload audio an audio file
 												</span>
 											</div>
 											<input

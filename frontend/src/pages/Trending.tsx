@@ -1,5 +1,6 @@
 import { TrendingUp, Flame, Clock } from "lucide-react";
 import SongCard from "../components/SongCard";
+import SongCardSkeleton from "../components/SongCardSkeleton";
 import { useSongStore } from "../store/songStore";
 
 const Trending = () => {
@@ -26,18 +27,22 @@ const Trending = () => {
 					<h2 className="text-2xl font-bold">Hot Right Now</h2>
 				</div>
 				<div className="space-y-2">
-					{hotSongs.map((song, index) => (
-						<div key={song.id} className="flex items-center gap-4">
-							<div className="w-8 text-center font-bold text-(--accent-primary)">
-								#{index + 1}
+					{hotSongs.length === 0 ? (
+						<SongCardSkeleton />
+					) : (
+						hotSongs.map((song, index) => (
+							<div key={song.id} className="flex items-center gap-4">
+								<div className="w-8 text-center font-bold text-(--accent-primary)">
+									#{index + 1}
+								</div>
+								<SongCard
+									song={song}
+									showPlayCount={true}
+									showListenerCount={true}
+								/>
 							</div>
-							<SongCard
-								song={song}
-								showPlayCount={true}
-								showListenerCount={true}
-							/>
-						</div>
-					))}
+						))
+					)}
 				</div>
 			</div>
 
@@ -48,18 +53,22 @@ const Trending = () => {
 					<h2 className="text-2xl font-bold">Top Charts</h2>
 				</div>
 				<div className="space-y-2">
-					{trendingSongs.map((song) => (
-						<div key={song.id} className="flex items-center gap-4">
-							<div className="w-12 text-center font-bold text-(--text-tertiary)">
-								#{song.rank}
+					{trendingSongs.length === 0 ? (
+						<SongCardSkeleton />
+					) : (
+						trendingSongs.map((song) => (
+							<div key={song.id} className="flex items-center gap-4">
+								<div className="w-12 text-center font-bold text-(--text-tertiary)">
+									#{song.rank}
+								</div>
+								<SongCard
+									song={song}
+									showPlayCount={true}
+									showListenerCount={false}
+								/>
 							</div>
-							<SongCard
-								song={song}
-								showPlayCount={true}
-								showListenerCount={false}
-							/>
-						</div>
-					))}
+						))
+					)}
 				</div>
 			</div>
 		</div>

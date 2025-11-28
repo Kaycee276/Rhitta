@@ -15,9 +15,8 @@ const normalizedKey = walletKey.startsWith("0x")
 	: (`0x${walletKey}` as `0x${string}`);
 
 const songSchema =
-	"uint256 id,string title,string artist,string artistId,string coverArt,string audioUrl,string genre";
+	"uint256 id,string title,string artist,string artistId,string coverArt,string audioUrl,string genre,uint256 duration";
 
-// cache initialized SDK and encoder
 let cached: {
 	sdk?: SDK;
 	encoder?: SchemaEncoder;
@@ -47,6 +46,8 @@ async function ensureInitialized() {
 	if (!schemaIdRaw) throw new Error("computeSchemaId returned null");
 	const schemaId = schemaIdRaw as `0x${string}`;
 
+	console.log("SchemaId :", schemaId);
+
 	// try register (ignore if already registered)
 	try {
 		const txHash = await sdk.streams.registerDataSchemas([
@@ -63,10 +64,14 @@ async function ensureInitialized() {
 			console.log("Schema registered:", hashHex);
 		}
 	} catch (err) {
-		if (String(err).includes("SchemaAlreadyRegistered")) {
+		const errorStr = String(err);
+		if (
+			errorStr.includes("SchemaAlreadyRegistered") ||
+			errorStr.includes("IDAlreadyUsed") ||
+			errorStr.includes("IDAlreadyUsed()")
+		) {
 			console.log("Schema already registered — continuing.");
 		} else {
-			// log and continue; do not fail entirely
 			console.warn("registerDataSchemas error:", err);
 		}
 	}
@@ -79,66 +84,117 @@ async function ensureInitialized() {
 
 /**
  * Publish a single song object to Somnia Data Streams.
- * Accepts a song where id may be non-numeric; numeric id is required by the schema so
- * we fall back to Date.now() when id is not numeric.
+ * Accepts a song from Supabase database format
  */
 export async function publishSong(song: {
 	id: string;
 	title?: string;
 	artist?: string;
-	artistId?: string;
-	coverArt?: string;
-	audioUrl?: string;
+	artist_id?: string;
+	cover_art?: string;
+	audio_url?: string;
 	genre?: string;
+	duration?: number;
 }) {
 	const { sdk, encoder, schemaId } = await ensureInitialized();
 	if (!sdk || !encoder || !schemaId)
 		throw new Error("Somnia SDK not initialized");
 
-	// schema expects uint256 id — try to use numeric id, otherwise use timestamp
+	const mappedSong = {
+		id: song.id,
+		title: song.title ?? "",
+		artist: song.artist ?? "",
+		artistId: song.artist_id ?? "",
+		coverArt: song.cover_art ?? "",
+		audioUrl: song.audio_url ?? "",
+		genre: song.genre ?? "",
+		duration: song.duration ?? 0,
+	};
+
 	let numericId: bigint;
-	if (/^\d+$/.test(song.id)) numericId = BigInt(song.id);
+	if (/^\d+$/.test(mappedSong.id)) numericId = BigInt(mappedSong.id);
 	else numericId = BigInt(Date.now());
 
 	const encodedData = encoder.encodeData([
 		{ name: "id", value: numericId, type: "uint256" },
-		{ name: "title", value: song.title ?? "", type: "string" },
-		{ name: "artist", value: song.artist ?? "", type: "string" },
-		{ name: "artistId", value: song.artistId ?? "", type: "string" },
-		{ name: "coverArt", value: song.coverArt ?? "", type: "string" },
-		{ name: "audioUrl", value: song.audioUrl ?? "", type: "string" },
-		{ name: "genre", value: song.genre ?? "", type: "string" },
+		{ name: "title", value: mappedSong.title, type: "string" },
+		{ name: "artist", value: mappedSong.artist, type: "string" },
+		{ name: "artistId", value: mappedSong.artistId, type: "string" },
+		{ name: "coverArt", value: mappedSong.coverArt, type: "string" },
+		{ name: "audioUrl", value: mappedSong.audioUrl, type: "string" },
+		{ name: "genre", value: mappedSong.genre, type: "string" },
+		{
+			name: "duration",
+			value: BigInt(Math.floor(mappedSong.duration)),
+			type: "uint256",
+		},
 	]);
 
-	const streamId = toHex(`song-${song.id}`, { size: 32 });
+	const streamId = `song-${song.id}`;
+
+	let streamIdBytes32: `0x${string}`;
+	if (streamId.length <= 32) {
+		streamIdBytes32 = toHex(streamId.padEnd(32, "\0"), { size: 32 });
+	} else {
+		const hash = toHex(streamId).slice(0, 66);
+		streamIdBytes32 = hash as `0x${string}`;
+	}
 
 	try {
 		const tx = await sdk.streams.set([
 			{
-				id: streamId,
+				id: streamIdBytes32,
 				schemaId,
 				data: encodedData,
 			},
 		]);
 		console.log(
-			`Published song ${song.title ?? song.id} to Somnia (tx: ${tx})`
+			`Published song ${
+				mappedSong.title || mappedSong.id
+			} to Somnia (tx: ${tx})`
 		);
 		return tx;
 	} catch (err) {
-		console.error("publishSong error:", err);
-		throw err;
+		const errorStr = String(err);
+		if (
+			errorStr.includes("SchemaAlreadyRegistered") ||
+			errorStr.includes("IDAlreadyUsed") ||
+			errorStr.includes("IDAlreadyUsed()")
+		) {
+			console.log("⚠️ Schema/ID already registered. Continuing...");
+			return null;
+		} else if (errorStr.includes("AbiEncodingBytesSizeMismatchError")) {
+			console.error("❌ Bytes size mismatch - check stream ID formatting");
+			throw new Error(`Stream ID formatting error: ${errorStr}`);
+		} else {
+			console.error("❌ Failed to publish song:", err);
+			throw err;
+		}
 	}
 }
 
 export async function publishMockSongs() {
+	let successCount = 0;
+	let errorCount = 0;
+
 	for (const song of mockSongs) {
 		try {
-			await publishSong(song as any);
-			// small delay to avoid spamming
-			await new Promise((r) => setTimeout(r, 1500));
+			const result = await publishSong(song as any);
+			if (result) {
+				successCount++;
+				console.log(
+					`✅ Successfully published song ${successCount}/${mockSongs.length}`
+				);
+			} else {
+				console.log(`⏭️  Skipped already published song`);
+			}
+			await new Promise((r) => setTimeout(r, 2000));
 		} catch (err) {
-			console.warn("publishMockSongs item error:", err);
+			errorCount++;
+			console.warn(`❌ Failed to publish song ${song.id}:`, err);
 		}
 	}
-	console.log("All mock songs published via SDS!");
+	console.log(
+		`Publishing complete: ${successCount} successful, ${errorCount} failed`
+	);
 }

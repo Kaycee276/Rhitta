@@ -8,11 +8,6 @@ import Toast from "./components/Toast";
 import { usePlayerStore } from "./store/playerStore";
 import { useToastStore } from "./store/toastStore";
 
-import {
-	startEventsSubscription,
-	stopEventsSubscription,
-} from "./services/eventsSubscriber";
-
 // Lazy load page components
 const Home = lazy(() => import("./pages/Home"));
 const Discover = lazy(() => import("./pages/Discover"));
@@ -20,14 +15,25 @@ const Library = lazy(() => import("./pages/Library"));
 const AddSong = lazy(() => import("./pages/AddSong"));
 // const Trending = lazy(() => import("./pages/Trending"));
 
+import { subscribe } from "./services/somnia";
+
 const App = () => {
 	const { playerState } = usePlayerStore();
 	const { toasts, removeToast } = useToastStore();
-
 	useEffect(() => {
-		startEventsSubscription({intervalMs:5000});
+		let stopFn: (() => void) | undefined;
+
+		(async () => {
+			try {
+				const stop = await subscribe();
+				if (typeof stop === "function") stopFn = stop;
+			} catch (err) {
+				console.error("Failed to start Somnia subscribe:", err);
+			}
+		})();
+
 		return () => {
-			stopEventsSubscription();
+			stopFn?.();
 		};
 	}, []);
 

@@ -16,5 +16,13 @@ export interface ReceivedSong {
 	coverArt?: string;
 	audioUrl?: string;
 	genre?: string;
+	duration: number;
+	playCount?: number;
+	listenerCount?: number;
+	price?: string;
+	nftTokenId?: string;
+	contractAddress?: string;
+	likes?: number;
+	isLiked?: boolean;
 	receivedAt: number;
 }
