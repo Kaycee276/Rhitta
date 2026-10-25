@@ -10,7 +10,7 @@
 		"build": "tsc -p tsconfig.json",
 		"start": "tsx src/index.ts",
 		"postinstall": "prisma generate",
-		"db:push": "prisma db push"
+		"db:push": "tsx src/scripts/dbPush.ts"
 	},
 	"dependencies": {
 		"@libsql/client": "^0.8.1",

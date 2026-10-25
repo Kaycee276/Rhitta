@@ -1,6 +1,7 @@
 import "./loadEnv.ts";
 import uploadRoutes from "./routes/upload.ts";
 import publish from "./routes/publish.ts";
+import { pushSchemaToDatabase } from "./scripts/dbPush.ts";
 import express from "express";
 import cors from "cors";
 import http from "http";
@@ -22,6 +23,11 @@ app.get("/health", (_req: Request, res: Response) =>
 );
 
 const PORT = process.env.PORT ? Number(process.env.PORT) : 4000;
-server.listen(PORT, () => {
+server.listen(PORT, async () => {
 	console.log(`Server listening on http://localhost:${PORT}`);
+	try {
+		await pushSchemaToDatabase();
+	} catch (err) {
+		console.error("Database table initialization notice:", err);
+	}
 });
