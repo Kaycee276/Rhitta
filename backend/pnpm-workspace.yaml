@@ -1,2 +1,7 @@
+onlyBuiltDependencies:
+  - '@prisma/client'
+  - '@prisma/engines'
+  - esbuild
+  - prisma
 minimumReleaseAgeExclude:
   - '@stellar/stellar-sdk@17.4.0'
