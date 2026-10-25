@@ -1,4 +1,4 @@
-// import { subscribe } from "../services/somnia";
+// import { subscribe } from "../services/stellar";
 import { useState } from "react";
 
 export function TestComponent() {

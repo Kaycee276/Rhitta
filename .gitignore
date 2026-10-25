@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.env
+.env.local
+target/
+contracts/target/
+.soroban/
+.stellar/
+.DS_Store

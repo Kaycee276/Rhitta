@@ -1,51 +1,42 @@
-# Rhitta Frontend
+# Rhitta Frontend — Stellar Decentralized Music Streaming
 
-The frontend application for Rhitta - a decentralized music streaming platform powered by Somnia Data Streams.
-
-## Quick Start
-
-```bash
-npm install
-npm run dev
-```
-
-Visit `http://localhost:4444` to see the app.
+The frontend application for **Rhitta** — a real-time decentralized music streaming platform built on **Stellar** and **Soroban**.
 
 ## Features
 
-- Real-time music streaming
-- Live play counts and analytics
-- Dynamic trending charts
-- Artist dashboard
-- NFT music marketplace
-- Instant royalty distribution
+- **Freighter Wallet Integration**: Connect and authenticate with the official Stellar Freighter wallet.
+- **Soroban Smart Contracts**: Stream track events, trigger play count updates, and record on-chain music data.
+- **Audio Streaming**: Reactive Web Audio player with synchronized playlist controls.
+- **Track Uploads & Minting**: Direct uploading and on-chain registration on Stellar Testnet.
 
 ## Tech Stack
 
-- React 19
-- TypeScript
-- Vite
-- Tailwind CSS
-- Somnia Data Streams SDK
-- Ethers.js / viem
+- **React 19** + **TypeScript** + **Vite**
+- **Tailwind CSS v4**
+- **@stellar/freighter-api** (Wallet Connection)
+- **@stellar/stellar-sdk** (Soroban RPC & Horizon client)
+- **Zustand** (Audio player & store state management)
 
-## Environment Variables
+## Getting Started
 
-Create a `.env` file:
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-```env
-VITE_SOMNIA_RPC_URL=https://testnet-rpc.somnia.network
-VITE_SOMNIA_CHAIN_ID=12345
-VITE_CONTRACT_ADDRESS=0x...
-VITE_IPFS_GATEWAY=https://ipfs.io/ipfs/
-```
+2. Copy environment file:
+   ```bash
+   cp .env.example .env
+   ```
 
-## Build
+3. Configure variables in `.env`:
+   ```bash
+   VITE_STELLAR_NETWORK=TESTNET
+   VITE_STELLAR_SOROBAN_RPC_URL=https://soroban-testnet.stellar.org
+   VITE_STELLAR_HORIZON_URL=https://horizon-testnet.stellar.org
+   ```
 
-```bash
-npm run build
-```
-
-## Theme
-
-Rhitta uses a **red theme** for a vibrant, energetic music streaming experience.
+4. Run the development server:
+   ```bash
+   npm run dev
+   ```

@@ -1,6 +1,6 @@
 import { useCallback, useState, useEffect } from "react";
 import { Search, Bell, User, X } from "lucide-react";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
+import StellarConnectButton from "./StellarConnectButton";
 import { AnimatePresence, motion } from "framer-motion";
 import { useClickOutside } from "../utils/useClickOutside";
 import { useLocation } from "react-router-dom";
@@ -91,7 +91,7 @@ const Header = () => {
 						/>
 					</div>
 					<div className="hidden md:block">
-						<ConnectButton />
+						<StellarConnectButton />
 					</div>
 
 					{/* Mobile user menu trigger */}
@@ -165,7 +165,7 @@ const Header = () => {
 								)}
 							</button>
 							<div className="w-full">
-								<ConnectButton />
+								<StellarConnectButton />
 							</div>
 						</div>
 					</motion.div>

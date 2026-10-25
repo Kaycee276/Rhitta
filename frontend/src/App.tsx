@@ -15,7 +15,7 @@ const Library = lazy(() => import("./pages/Library"));
 const AddSong = lazy(() => import("./pages/AddSong"));
 // const Trending = lazy(() => import("./pages/Trending"));
 
-import { subscribe } from "./services/somnia";
+import { subscribe } from "./services/stellar";
 
 const App = () => {
 	const { playerState } = usePlayerStore();
@@ -28,7 +28,7 @@ const App = () => {
 				const stop = await subscribe();
 				if (typeof stop === "function") stopFn = stop;
 			} catch (err) {
-				console.error("Failed to start Somnia subscribe:", err);
+				console.error("Failed to start Stellar subscribe:", err);
 			}
 		})();
 

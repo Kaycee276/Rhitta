@@ -1,10 +1,10 @@
 import "../loadEnv.ts";
 import type { ReceivedSong } from "../types/types.ts";
-import { publishSong } from "../services/somnia/somniaService.ts";
+import { publishSong } from "../services/stellar/stellarService.ts";
 import { uploadToSupabase } from "../utils/uploadFile.ts";
 import { getAudioDuration } from "../utils/getAudioDuration.ts";
 import { generateFileName } from "../utils/generateFileName.ts";
-import { markSongAsPublished } from "../services/somnia/publishSongsFromSupabase.ts";
+import { markSongAsPublished } from "../services/stellar/publishSongsFromSupabase.ts";
 import { formatDate } from "../utils/formatDate.ts";
 import express from "express";
 import cors from "cors";

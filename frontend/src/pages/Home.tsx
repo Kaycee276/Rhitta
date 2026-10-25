@@ -27,7 +27,7 @@ const Home = () => {
 					<div className="flex items-center gap-2">
 						<Zap className="w-5 h-5 text-(--accent-primary)" />
 						<span className="text-sm text-(--text-secondary)">
-							Real-time streaming powered by Somnia Data Streams
+							Real-time streaming powered by Stellar & Soroban
 						</span>
 					</div>
 				</div>

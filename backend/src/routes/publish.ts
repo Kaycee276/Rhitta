@@ -1,4 +1,4 @@
-import { publishAllSongsFromSupabase } from "../services/somnia/publishSongsFromSupabase.ts";
+import { publishAllSongsFromSupabase } from "../services/stellar/publishSongsFromSupabase.ts";
 import express from "express";
 import cors from "cors";
 import type { Request, Response } from "express";
@@ -9,15 +9,16 @@ app.use(express.json());
 
 app.post("/publish-songs", async (_req: Request, res: Response) => {
 	try {
-		await publishAllSongsFromSupabase();
+		const result = await publishAllSongsFromSupabase();
 		res.json({
 			success: true,
-			message: "Started publishing all songs to Somnia",
+			message: "Started publishing songs to Stellar",
+			data: result,
 		});
 	} catch (error) {
 		res.status(500).json({
 			success: false,
-			error: "Failed to publish songs",
+			error: "Failed to publish songs to Stellar",
 		});
 	}
 });

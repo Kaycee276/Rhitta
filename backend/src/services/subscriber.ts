@@ -1,75 +1,62 @@
 import "../loadEnv.ts";
-import formatSchemaId from "../utils/formatSchemaId.ts";
-import { normalizeTo0x } from "../utils/hex.ts";
-import { dreamChain } from "./dream-chain.ts";
-import { SDK } from "@somnia-chain/streams";
-import { createPublicClient, http } from "viem";
+import {
+	rpcServer,
+	horizonServer,
+	STELLAR_CONTRACT_ID,
+} from "./stellar/stellarConfig.ts";
 
 async function main() {
-	const publisherWallet = process.env.PUBLISHER_WALLET;
-	if (!publisherWallet) {
-		throw new Error("PUBLISHER_ WALLET env variable is required");
-	}
-	const publicClient = createPublicClient({
-		chain: dreamChain,
-		transport: http(),
-	});
-	const sdk = new SDK({ public: publicClient });
+	console.log("[Stellar Subscriber] Listening for Stellar network & Soroban events...");
 
-	const helloSchema = `string message,uint256 timestamp,address sender`;
-	const schemaIdRaw = await sdk.streams.computeSchemaId(helloSchema);
-	if (!schemaIdRaw) throw new Error("computeSchemaId returned null");
+	let lastLedger: number | undefined;
 
-	const schemaId = formatSchemaId(schemaIdRaw);
-	if (!schemaId) throw new Error("formatSchemaId returned undefined");
-	console.log("Computed Schema ID:", schemaId);
-
-	// const schemaEncoder = new SchemaEncoder(helloSchema);
-	const seen = new Set();
-
-	const hexSchemaId = normalizeTo0x(schemaId);
-	const normalizePubKey = normalizeTo0x(publisherWallet);
-
+	// Poll Soroban events if contract ID is configured, otherwise monitor Horizon transactions
 	setInterval(async () => {
-		const allData = await sdk.streams.getAllPublisherDataForSchema(
-			hexSchemaId,
-			normalizePubKey
-		);
-		if (!allData || allData.length === 0) return;
-		for (const dataItem of allData) {
-			let message = "",
-				timestamp = "",
-				sender = "";
-			for (const field of dataItem) {
-				if (typeof field === "string") {
-					continue;
+		try {
+			if (STELLAR_CONTRACT_ID) {
+				const latestLedgerRes = await rpcServer.getLatestLedger();
+				const startLedger = lastLedger || latestLedgerRes.sequence - 10;
+
+				const events = await rpcServer.getEvents({
+					startLedger,
+					filters: [
+						{
+							type: "contract",
+							contractIds: [STELLAR_CONTRACT_ID],
+						},
+					],
+				});
+
+				if (events.events && events.events.length > 0) {
+					for (const event of events.events) {
+						console.log(
+							`[Stellar Event] Ledger ${event.ledger} | Topic: ${event.topic.join(
+								", "
+							)} | Value: ${JSON.stringify(event.value)}`
+						);
+					}
 				}
+				lastLedger = latestLedgerRes.sequence;
+			} else {
+				// Monitor latest transactions on Testnet
+				const txPage = await horizonServer
+					.transactions()
+					.order("desc")
+					.limit(5)
+					.call();
 
-				const val = field.value?.value ?? field.value;
-				const strVal =
-					val === undefined || val === null
-						? ""
-						: typeof val === "string"
-						? val
-						: typeof val === "object"
-						? JSON.stringify(val)
-						: String(val);
-				if (field.name === "message") message = strVal;
-				if (field.name === "timestamp") timestamp = strVal;
-				if (field.name === "sender") sender = strVal;
+				if (txPage.records.length > 0) {
+					console.log(
+						`[Stellar Horizon] Latest network ledger: ${txPage.records[0].ledger_attr}`
+					);
+				}
 			}
-
-			const id = `${timestamp}-${message}`;
-			if (!seen.has(id)) {
-				seen.add(id);
-				console.log(
-					`🆕 ${message} from ${sender} at ${new Date(
-						Number(timestamp) * 1000
-					).toLocaleTimeString()}`
-				);
-			}
+		} catch (err) {
+			console.debug("[Stellar Subscriber] Polling notice:", (err as Error).message);
 		}
-	}, 3000);
+	}, 5000);
 }
 
-main();
+main().catch((err) => {
+	console.error("[Stellar Subscriber] Error:", err);
+});

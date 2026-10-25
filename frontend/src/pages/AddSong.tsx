@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAccount } from "wagmi";
+import { useStellarWallet } from "../context/StellarWalletContext";
 import { useToastStore } from "../store/toastStore";
 import { Upload, Music, FileText, ArrowLeft, ArrowRight } from "lucide-react";
 import { Stepper } from "../components/Stepper";
@@ -9,7 +9,7 @@ import { uploadSong } from "../api/uploadClient";
 import { useSongStore } from "../store/songStore";
 
 const AddSong = () => {
-	const { address } = useAccount();
+	const { address } = useStellarWallet();
 	const navigate = useNavigate();
 	const { addToast } = useToastStore();
 
@@ -344,7 +344,7 @@ const AddSong = () => {
 							<div className="space-y-6">
 								<div>
 									<label className="block text-sm font-medium text-(--text-secondary) mb-2">
-										Price (STT)
+										Price (XLM)
 									</label>
 									<input
 										type="text"
@@ -385,7 +385,7 @@ const AddSong = () => {
 											{(
 												Number.parseFloat(formData.price) * formData.nftAmount
 											).toFixed(2)}{" "}
-											{formData.price ? "STT" : ""}
+											{formData.price ? "XLM" : ""}
 										</p>
 									</div>
 								)}

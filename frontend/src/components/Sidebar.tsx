@@ -9,13 +9,13 @@ import {
 } from "lucide-react";
 import { useEffect, useState, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useAccount } from "wagmi";
+import { useStellarWallet } from "../context/StellarWalletContext";
 import { useToastStore } from "../store/toastStore";
 
 const Sidebar = () => {
 	const navigate = useNavigate();
 	const location = useLocation();
-	const { address } = useAccount();
+	const { address } = useStellarWallet();
 	const { addToast } = useToastStore();
 
 	const getIsMobile = () =>

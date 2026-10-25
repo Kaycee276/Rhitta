@@ -1,14 +1,14 @@
-# 🎵 Rhitta - Decentralized Music Streaming Platform
+# 🎵 Rhitta - Decentralized Music Streaming Platform on Stellar
 
 <div align="center">
 
-![Rhitta Logo](https://img.shields.io/badge/Rhitta-Music%20Streaming-red?style=for-the-badge)
-![Somnia](https://img.shields.io/badge/Powered%20by-Somnia%20Data%20Streams-red?style=for-the-badge)
+![Rhitta Logo](https://img.shields.io/badge/Rhitta-Music%20Streaming-blue?style=for-the-badge)
+![Stellar](https://img.shields.io/badge/Powered%20by-Stellar%20%26%20Soroban-black?style=for-the-badge&logo=stellar)
 ![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)
 
-**Real-time, decentralized music streaming powered by Somnia Data Streams**
+**Real-time, decentralized music streaming powered by Stellar and Soroban smart contracts**
 
-[Features](#-features) • [How It Works](#-how-it-works) • [Tech Stack](#-tech-stack) • [Setup](#-setup) • [Deployment](#-deployment)
+[Features](#-features) • [How It Works](#-how-it-works) • [Tech Stack](#-tech-stack) • [Smart Contracts](#-smart-contracts) • [Setup](#-setup)
 
 </div>
 
@@ -16,15 +16,15 @@
 
 ## 📖 Overview
 
-**Rhitta** is a next-generation decentralized music streaming platform that leverages **Somnia Data Streams (SDS)** to deliver real-time, reactive music experiences on the blockchain. Built for the Somnia Data Streams Mini Hackathon, Rhitta transforms how users discover, stream, and interact with music through instant on-chain data streams.
+**Rhitta** is a next-generation decentralized music streaming platform built on the **Stellar Network** and powered by **Soroban** WebAssembly (WASM) smart contracts. Rhitta transforms how listeners discover, stream, and interact with artists through instant on-chain track registration, transparent play accounting, and automated micro-royalty payouts.
 
-Unlike traditional streaming platforms that rely on centralized servers and delayed updates, Rhitta uses Somnia's breakthrough data streaming protocol to provide:
+By building on Stellar, Rhitta benefits from:
 
-- ⚡ **Instant updates** as music plays
-- 📊 **Real-time analytics** and play counts
-- 💰 **Live royalty distribution**
-- 🎯 **Reactive playlists** that update instantly
-- 🔥 **Live trending charts** powered by on-chain data
+- ⚡ **Sub-second to 3–5s finality** and near-zero transaction fees
+- 🛡️ **Soroban Smart Contracts**: High-performance, memory-safe Rust smart contracts compiled to WASM
+- 💰 **Native Assets & Stellar USDC**: Direct micro-payments and royalty distributions in XLM or USDC
+- 👛 **Freighter Wallet Integration**: Seamless authentication and transaction signing for users and creators
+- 📊 **Real-time On-Chain Events**: Contract events emitted for track publishing, plays, and tip distributions
 
 ---
 
@@ -32,431 +32,137 @@ Unlike traditional streaming platforms that rely on centralized servers and dela
 
 ### 🎧 Core Features
 
-- **Real-Time Music Streaming**: Stream music with instant playback and zero latency
-- **Live Play Counts**: Watch play counts update in real-time as songs are played globally
-- **Dynamic Trending Charts**: Real-time trending charts that react instantly to on-chain activity
-- **Smart Playlists**: Playlists that automatically update based on real-time data streams
-- **Artist Dashboard**: Real-time analytics for artists showing plays, earnings, and listener engagement
-- **NFT Music Tokens**: Each track is minted as an NFT on Somnia Testnet
-- **Instant Royalty Distribution**: Automatic, real-time royalty payments to artists
-
-### 🔴 Real-Time Features Powered by SDS
-
-- **Live Listener Counts**: See how many people are listening to a track right now
-- **Instant Play Updates**: Play counts update immediately across all users
-- **Real-Time Comments**: Live comment streams synchronized across all clients
-- **Dynamic Pricing**: Song prices that react to demand in real-time
-- **Instant Notifications**: Get notified instantly when your favorite artists release new music
+- **Real-Time Music Streaming**: Low-latency web audio player with queue management and playback controls
+- **On-Chain Track Registry**: Every song is indexed and cataloged directly on the Stellar ledger
+- **Verifiable Play Counts**: Play events are verified on-chain via the `rhitta-music` Soroban contract
+- **Artist Tipping & Royalties**: Direct, frictionless creator support using native Stellar assets (XLM) or stablecoins (USDC)
+- **Freighter Wallet Connect**: Fast, non-custodial wallet connection and account identification (`G...`)
+- **Dynamic Trending & Discovery**: Catalog browsing with genre filtering and on-chain play metrics
 
 ---
 
 ## 🏗️ How It Works
 
-### Somnia Data Streams Integration
-
-Rhitta leverages **Somnia Data Streams SDK** to create reactive data streams from on-chain events:
-
-1. **Music NFT Minting**: When an artist uploads a track, it's minted as an NFT on Somnia Testnet
-2. **Stream Creation**: SDS creates real-time streams for:
-
-   - Play events (when a song is played)
-   - Purchase events (when a song is bought)
-   - Like/favorite events
-   - Comment events
-   - Royalty distribution events
-
-3. **Reactive UI**: The frontend subscribes to these streams and updates instantly:
-   - Play counts increment in real-time
-   - Trending charts reorder automatically
-   - Artist earnings update live
-   - Playlists refresh instantly
-
-### Architecture
+### Soroban & Stellar Architecture
 
 ```
-┌─────────────────┐
-│   Frontend      │
-│   (React + TS)  │
-└────────┬────────┘
-         │
-         │ Subscribes to
-         │ Data Streams
-         ▼
-┌─────────────────┐
-│  Somnia Data    │
-│  Streams SDK    │
-└────────┬────────┘
-         │
-         │ Monitors
-         │ On-Chain Events
-         ▼
-┌─────────────────┐
-│  Smart Contracts│
-│  (Somnia L1)    │
-│  - MusicNFT     │
-│  - Marketplace  │
-│  - Royalties    │
-└─────────────────┘
+┌─────────────────────────────────┐
+│     Frontend (React + Vite)     │
+│   - Freighter Wallet Connector  │
+│   - Stellar SDK (Soroban RPC)   │
+└────────────────┬────────────────┘
+                 │
+                 │ 1. Connect & Sign
+                 ▼
+┌─────────────────────────────────┐
+│   Freighter / Stellar Network   │
+│   - Account Auth (G...)         │
+│   - Testnet / Public Network    │
+└────────────────┬────────────────┘
+                 │
+                 │ 2. Contract Calls & Events
+                 ▼
+┌─────────────────────────────────┐
+│   Soroban Smart Contracts       │
+│   (rhitta-music in Rust/WASM)   │
+│   - publish_song(...)           │
+│   - record_play(...)            │
+│   - get_song(...)               │
+│   - SongPublishedEvent          │
+│   - SongPlayedEvent             │
+└─────────────────────────────────┘
 ```
 
-### Key Data Streams
+### Key On-Chain Workflows
 
-1. **Play Stream**: Real-time stream of all play events
-
-   - Updates play counts instantly
-   - Powers live listener counts
-   - Feeds trending algorithms
-
-2. **Purchase Stream**: Stream of NFT purchases
-
-   - Updates ownership in real-time
-   - Triggers royalty distribution
-   - Updates marketplace listings
-
-3. **Interaction Stream**: Likes, comments, favorites
-
-   - Real-time social engagement
-   - Instant UI updates
-   - Live activity feeds
-
-4. **Royalty Stream**: Real-time royalty payments
-   - Instant artist earnings
-   - Live payment notifications
-   - Transparent revenue tracking
+1. **Track Registration**: Creators upload audio and cover art, signing a `publish_song` transaction that records the track on Soroban with title, artist address, duration, price, and storage references.
+2. **Play Event & Analytics**: As listeners stream tracks, `record_play` updates play counters and emits typed contract events.
+3. **Decentralized Storage**: Audio files and artwork are preserved with resilient content hashes.
 
 ---
 
 ## 🛠️ Tech Stack
 
 ### Frontend
+- **React 19** + **TypeScript** + **Vite**
+- **Tailwind CSS v4**
+- **@stellar/freighter-api**: Official Stellar wallet interface
+- **@stellar/stellar-sdk**: Stellar Horizon client & Soroban RPC integration
+- **Zustand**: Audio player state and playlist stores
 
-- **React 19** - Modern UI framework
-- **TypeScript** - Type-safe development
-- **Vite** - Fast build tool and dev server
-- **Tailwind CSS** - Utility-first styling
-- **Somnia Data Streams SDK** - Real-time data streaming
-- **Ethers.js / viem** - Blockchain interactions
-- **Web3Modal / Wagmi** - Wallet connectivity
+### Backend
+- **Node.js** + **TypeScript** + **Express**
+- **@stellar/stellar-sdk**: Account management, transaction submission, and contract interaction
+- **Multer** & **music-metadata**: Audio duration extraction and file processing
+- **Supabase**: Relational database storage and file hosting
 
-### Blockchain
-
-- **Somnia L1** - High-performance EVM-compatible blockchain
-- **Solidity** - Smart contract development
-- **Hardhat / Foundry** - Development framework
-- **IPFS / Arweave** - Decentralized music storage
-
-### Infrastructure
-
-- **Somnia Data Streams** - Real-time data protocol
-- **Somnia Testnet** - Deployment environment
+### Smart Contracts
+- **Stellar Soroban SDK v27**
+- **Rust** (compiled to `wasm32-unknown-unknown`)
+- Built-in test suite with mock authorizations
 
 ---
 
-## 🚀 Setup
+## 📜 Smart Contracts
 
-### Prerequisites
+The Soroban contracts are located in the [`contracts/`](file:///home/kaycee/Desktop/Personal/Rhitta/contracts) directory.
 
-- Node.js 18+ and npm/yarn
-- Git
-- MetaMask or compatible Web3 wallet
-- Somnia Testnet tokens (request from Telegram group)
+### Contract Methods (`RhittaMusicContract`)
 
-### Installation
+| Method | Parameters | Description |
+| :--- | :--- | :--- |
+| `init` | `admin: Address` | Initializes contract with admin address |
+| `publish_song` | `artist: Address, id: String, title: String, artist_name: String, cover_art: String, audio_url: String, genre: String, duration: u32, price: i128` | Registers a new track on-chain |
+| `record_play` | `song_id: String` | Increments play count and emits a `SongPlayedEvent` |
+| `get_song` | `song_id: String` | Fetches track details from contract storage |
+| `get_song_count` | *none* | Returns total published track count |
+| `get_song_by_index`| `index: u32` | Retrieves a song by catalog index |
 
-1. **Clone the repository**
-
-   ```bash
-   git clone <repository-url>
-   cd Rhitta
-   ```
-
-2. **Install dependencies**
-
-   ```bash
-   cd frontend
-   npm install
-   ```
-
-3. **Install Somnia Data Streams SDK**
-
-   ```bash
-   npm install @somnia-network/datastreams-sdk
-   ```
-
-4. **Set up environment variables**
-
-   ```bash
-   cp .env.example .env
-   ```
-
-   Edit `.env`:
-
-   ```env
-   VITE_SOMNIA_RPC_URL=https://testnet-rpc.somnia.network
-   VITE_SOMNIA_CHAIN_ID=12345
-   VITE_CONTRACT_ADDRESS=0x...
-   VITE_IPFS_GATEWAY=https://ipfs.io/ipfs/
-   ```
-
-5. **Start development server**
-
-   ```bash
-   npm run dev
-   ```
-
-6. **Open in browser**
-   ```
-   http://localhost:4444
-   ```
-
-### Smart Contract Setup
-
-1. **Install Hardhat**
-
-   ```bash
-   npm install --save-dev hardhat
-   npx hardhat init
-   ```
-
-2. **Configure Hardhat for Somnia**
-
-   ```javascript
-   // hardhat.config.js
-   networks: {
-     somniaTestnet: {
-       url: "https://testnet-rpc.somnia.network",
-       chainId: 12345,
-       accounts: [process.env.PRIVATE_KEY]
-     }
-   }
-   ```
-
-3. **Deploy contracts**
-   ```bash
-   npx hardhat run scripts/deploy.js --network somniaTestnet
-   ```
-
----
-
-## 📱 Usage
-
-### For Listeners
-
-1. **Connect Wallet**: Click "Connect Wallet" and approve the connection
-2. **Browse Music**: Explore trending tracks, new releases, and playlists
-3. **Stream Music**: Click play to start streaming (requires purchasing the NFT)
-4. **Real-Time Updates**: Watch play counts, listener counts, and charts update live
-5. **Interact**: Like, comment, and favorite tracks in real-time
-
-### For Artists
-
-1. **Upload Music**: Upload your track (stored on IPFS)
-2. **Mint NFT**: Create an NFT for your track on Somnia
-3. **Set Price**: Set the purchase price for your track
-4. **Monitor**: Watch real-time analytics, plays, and earnings
-5. **Earn**: Receive instant royalty payments as your music is played
-
----
-
-## 🎯 Somnia Data Streams Implementation
-
-### Example: Real-Time Play Count
-
-```typescript
-import { DataStreamsClient } from "@somnia-network/datastreams-sdk";
-
-const client = new DataStreamsClient({
-	rpcUrl: import.meta.env.VITE_SOMNIA_RPC_URL,
-	chainId: import.meta.env.VITE_SOMNIA_CHAIN_ID,
-});
-
-// Subscribe to play events
-const playStream = client.createStream({
-	contractAddress: MUSIC_NFT_CONTRACT,
-	eventName: "SongPlayed",
-	filters: { songId: currentSongId },
-});
-
-playStream.subscribe((event) => {
-	// Update play count instantly
-	setPlayCount(event.data.playCount);
-	setListenerCount(event.data.currentListeners);
-});
-```
-
-### Example: Real-Time Trending Chart
-
-```typescript
-// Stream all play events and calculate trending
-const trendingStream = client.createStream({
-	contractAddress: MUSIC_NFT_CONTRACT,
-	eventName: "SongPlayed",
-	aggregation: {
-		window: "1h",
-		groupBy: "songId",
-		orderBy: "count",
-		limit: 10,
-	},
-});
-
-trendingStream.subscribe((events) => {
-	// Chart updates automatically as events stream in
-	setTrendingSongs(events);
-});
-```
-
----
-
-## 🚢 Deployment
-
-### Deploy to Somnia Testnet
-
-1. **Build the frontend**
-
-   ```bash
-   npm run build
-   ```
-
-2. **Deploy to Vercel/Netlify**
-
-   ```bash
-   # Vercel
-   vercel deploy
-
-   # Netlify
-   netlify deploy --prod
-   ```
-
-3. **Update contract addresses** in production environment variables
-
-4. **Verify deployment** on Somnia Testnet explorer
-
-### Smart Contract Deployment
-
-```bash
-# Deploy MusicNFT contract
-npx hardhat run scripts/deploy.js --network somniaTestnet
-
-# Verify contract
-npx hardhat verify --network somniaTestnet <CONTRACT_ADDRESS>
-```
-
----
-
-## 📊 Project Structure
-
-```
-Rhitta/
-├── frontend/
-│   ├── src/
-│   │   ├── components/      # React components
-│   │   ├── hooks/           # Custom hooks for SDS
-│   │   ├── services/        # SDS client & blockchain services
-│   │   ├── contracts/       # Contract ABIs
-│   │   ├── types/           # TypeScript types
-│   │   └── utils/           # Utility functions
-│   ├── public/              # Static assets
-│   └── package.json
-├── contracts/
-│   ├── contracts/           # Solidity smart contracts
-│   ├── scripts/             # Deployment scripts
-│   └── test/                # Contract tests
-└── README.md
-```
-
----
-
-## 🎨 Design
-
-Rhitta features a modern, sleek design with a **red theme** that represents passion, energy, and the vibrant music culture. The UI is designed for:
-
-- **Dark mode** by default for immersive listening
-- **Responsive design** for all devices
-- **Smooth animations** for real-time updates
-- **Intuitive navigation** for seamless music discovery
-
----
-
-## 🧪 Testing
-
-### Frontend Tests
-
-```bash
-npm run test
-```
-
-### Smart Contract Tests
+### Testing Contracts
 
 ```bash
 cd contracts
-npx hardhat test
+cargo test
 ```
 
 ---
 
-## 📝 Submission Requirements
+## 🚀 Getting Started
 
-✅ **Public GitHub Repo** - This repository  
-✅ **Working Web3 dApp** - Deployed on Somnia Testnet  
-✅ **Demo Video** - 3-5 minute walkthrough  
-✅ **README** - Comprehensive documentation (this file)
+### Prerequisites
 
----
+- Node.js >= 18
+- Rust and `cargo` (with `wasm32-unknown-unknown` target for Soroban)
+- [Freighter Wallet](https://www.freighter.app/) browser extension
 
-## 🏆 Hackathon Goals
+### Installation
 
-- ✅ Integrate Somnia Data Streams SDK
-- ✅ Build functional prototype with real-time features
-- ✅ Deploy on Somnia Testnet
-- ✅ Demonstrate reactive, structured data streams
-- ✅ Showcase real-time UX capabilities
+1. Clone the repository and install dependencies:
+   ```bash
+   # Install Frontend
+   cd frontend
+   npm install
 
----
+   # Install Backend
+   cd ../backend
+   npm install
+   ```
 
-## 🤝 Contributing
+2. Configure environment variables:
+   - In `backend/`: Copy `.env.example` to `.env` and configure your Stellar keys and Supabase credentials.
+   - In `frontend/`: Copy `.env.example` to `.env` and set `VITE_STELLAR_SOROBAN_RPC_URL` and `VITE_STELLAR_HORIZON_URL`.
 
-This is a hackathon project, but contributions are welcome! Please feel free to:
+3. Start development servers:
+   ```bash
+   # In backend/
+   npm run dev
 
-- Report bugs
-- Suggest features
-- Submit pull requests
+   # In frontend/
+   npm run dev
+   ```
 
 ---
 
 ## 📄 License
 
-MIT License - feel free to use this project for learning and development.
-
----
-
-## 🔗 Links
-
-- **Live Demo**: [Coming Soon]
-- **Somnia Docs**: https://docs.somnia.network
-- **Data Streams Info**: https://datastreams.somnia.network
-- **Somnia X**: https://x.com/SomniaEco
-- **Telegram**: https://t.me/+XHq0F0JXMyhmMzM0
-
----
-
-## 👥 Team
-
-Built with ❤️ for the **Somnia Data Streams Mini Hackathon 2025**
-
----
-
-## 🙏 Acknowledgments
-
-- Somnia Network for the amazing Data Streams SDK
-- The hackathon organizers and mentors
-- The Web3 music community
-
----
-
-<div align="center">
-
-**Made with 🎵 and ⚡ by the Rhitta Team**
-
-[⬆ Back to Top](#-rhitta---decentralized-music-streaming-platform)
-
-</div>
+MIT

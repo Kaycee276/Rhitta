@@ -1,40 +1,38 @@
-# Rhitta backend (TypeScript)
+# Rhitta Backend — Stellar & Soroban Service
 
-Minimal backend that bridges Somnia Data Streams to frontend clients via WebSocket and a small HTTP API. It uses the Somnia SDK when configured; otherwise it falls back to a mock event generator for local development.
+Backend service for Rhitta that bridges song management, Supabase storage, and Stellar / Soroban on-chain music registration.
 
-Quick start
+## Architecture
 
-1. cd backend
-2. copy `.env.example` to `.env` and set values (SOMNIA_RPC_URL if you have it)
-3. npm install
-4. npm run dev
+- **Blockchain Layer**: Stellar Testnet & Soroban WASM Smart Contracts (`rhitta-music`)
+- **Stellar SDK**: Interacts with Soroban RPC (`https://soroban-testnet.stellar.org`) and Stellar Horizon (`https://horizon-testnet.stellar.org`)
+- **Metadata & Audio Storage**: Supabase Storage / IPFS
+- **API**: Express REST endpoints for track upload and publishing
 
-Endpoints
+## Getting Started
 
-- GET /health — basic health check
-- GET /events — returns buffered recent events
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-WebSocket
+2. Copy `.env.example` to `.env`:
+   ```bash
+   cp .env.example .env
+   ```
 
-- Connect to ws://localhost:4000/ — on connect you receive a `buffer` message with recent events.
-- New events are broadcast as messages: { type: 'event', data: { ... } }
-  Rhitta backend
+3. Fill in your Stellar credentials:
+   - `STELLAR_SECRET_KEY`: Your Stellar account secret key (begins with `S`)
+   - `STELLAR_PUBLIC_KEY`: Your Stellar account public key (begins with `G`)
+   - `STELLAR_CONTRACT_ID`: (Optional) Deployed Soroban `rhitta-music` contract ID
 
-This minimal backend connects to Somnia Data Streams and broadcasts events to connected frontend clients via WebSockets. It also exposes a small HTTP API to fetch recent events.
+4. Run the development server:
+   ```bash
+   npm run dev
+   ```
 
-Setup
+## Endpoints
 
-1. cd backend
-2. npm install
-3. Copy `.env.example` to `.env` and fill SOMNIA\_\* values if you have them.
-4. npm start
-
-Endpoints
-
-- WebSocket server: ws://localhost:PORT (default 4000) — receives JSON events pushed from Somnia
-- GET /events — returns recent buffered events
-
-Notes
-
-- If Somnia env vars are missing, the server will use mock events (useful for local dev).
-- You can adapt this to use SSE or socket.io if preferred.
+- `POST /new-upload`: Upload track audio and cover art, store metadata in Supabase, and register on Stellar.
+- `POST /publish-songs`: Batch publish unpublished tracks to Stellar.
+- `GET /health`: Health check.

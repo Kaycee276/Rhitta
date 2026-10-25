@@ -2,7 +2,7 @@
 	"name": "rhitta-backend",
 	"version": "0.1.0",
 	"private": true,
-	"description": "TypeScript backend for Rhitta — Somnia Data Streams bridge",
+	"description": "TypeScript backend for Rhitta — Stellar & Soroban music platform bridge",
 	"main": "dist/index.js",
 	"type": "commonjs",
 	"scripts": {
@@ -11,14 +11,13 @@
 		"start": "node dist/index.js"
 	},
 	"dependencies": {
-		"@somnia-chain/streams": "^0.9.5",
+		"@stellar/stellar-sdk": "^17.4.0",
 		"@supabase/supabase-js": "^2.84.0",
 		"cors": "^2.8.5",
 		"dotenv": "^16.0.0",
 		"express": "^4.18.2",
 		"multer": "^2.0.2",
-		"music-metadata": "^11.10.3",
-		"viem": "^2.39.0"
+		"music-metadata": "^11.10.3"
 	},
 	"devDependencies": {
 		"@types/express": "^4.17.17",
