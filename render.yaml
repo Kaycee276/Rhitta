@@ -1,0 +1,36 @@
+services:
+  # ---------------------------------------------------------------------------
+  # Rhitta Backend API Service
+  # ---------------------------------------------------------------------------
+  - type: web
+    name: rhitta-backend
+    runtime: node
+    plan: free
+    region: oregon
+    rootDir: backend
+    buildCommand: npm install && npm run build
+    startCommand: npm run start
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: 20.x
+      - key: STELLAR_NETWORK
+        value: TESTNET
+      - key: STELLAR_HORIZON_URL
+        value: https://horizon-testnet.stellar.org
+      - key: STELLAR_SOROBAN_RPC_URL
+        value: https://soroban-testnet.stellar.org
+      - key: STELLAR_NETWORK_PASSPHRASE
+        value: "Test SDF Network ; September 2015"
+      # Sensitive variables (prompted in Render UI during Blueprint creation)
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: STELLAR_SECRET_KEY
+        sync: false
+      - key: STELLAR_PUBLIC_KEY
+        sync: false
+      - key: STELLAR_CONTRACT_ID
+        sync: false
