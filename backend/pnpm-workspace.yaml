@@ -1,0 +1,2 @@
+minimumReleaseAgeExclude:
+  - '@stellar/stellar-sdk@17.4.0'

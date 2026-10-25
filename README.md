@@ -149,24 +149,24 @@ cargo test
    ```bash
    # Install Frontend
    cd frontend
-   npm install
+   pnpm install
 
    # Install Backend
    cd ../backend
-   npm install
+   pnpm install
    ```
 
 2. Configure environment variables:
-   - In `backend/`: Copy `.env.example` to `.env` and configure your Stellar keys and Supabase credentials.
-   - In `frontend/`: Copy `.env.example` to `.env` and set `VITE_STELLAR_SOROBAN_RPC_URL` and `VITE_STELLAR_HORIZON_URL`.
+   - In `backend/`: Copy `.env.example` to `.env` and configure your Database and Stellar keys.
+   - In `frontend/`: Copy `.env.example` to `.env` and configure your Stellar RPC and Horizon URLs.
 
 3. Start development servers:
    ```bash
    # In backend/
-   npm run dev
+   pnpm run dev
 
    # In frontend/
-   npm run dev
+   pnpm run dev
    ```
 
 ---

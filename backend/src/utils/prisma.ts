@@ -1,5 +1,4 @@
 import "../loadEnv.ts";
-import { createClient } from "@libsql/client";
 import { PrismaLibSQL } from "@prisma/adapter-libsql";
 import { PrismaClient } from "@prisma/client";
 
@@ -10,12 +9,10 @@ const url =
 
 const authToken = process.env.TURSO_AUTH_TOKEN || undefined;
 
-const libsql = createClient({
+const adapter = new PrismaLibSQL({
 	url,
 	authToken,
 });
-
-const adapter = new PrismaLibSQL(libsql);
 
 export const prisma = new PrismaClient({ adapter });
 

@@ -14,7 +14,7 @@ Backend service for Rhitta that bridges song management, Prisma ORM with Turso (
 
 1. Install dependencies:
    ```bash
-   npm install
+   pnpm install
    ```
 
 2. Copy `.env.example` to `.env`:
@@ -33,12 +33,12 @@ Backend service for Rhitta that bridges song management, Prisma ORM with Turso (
 
 4. Push schema to your database:
    ```bash
-   npx prisma db push
+   pnpm run db:push
    ```
 
 5. Run development server:
    ```bash
-   npm run dev
+   pnpm run dev
    ```
 
 ## Endpoints

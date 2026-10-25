@@ -8,8 +8,8 @@ services:
     plan: free
     region: oregon
     rootDir: backend
-    buildCommand: npm install && npm run build
-    startCommand: npm run start
+    buildCommand: corepack enable && pnpm install && pnpm run build
+    startCommand: pnpm run start
     healthCheckPath: /health
     autoDeploy: true
     envVars:

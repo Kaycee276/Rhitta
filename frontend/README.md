@@ -21,7 +21,7 @@ The frontend application for **Rhitta** — a real-time decentralized music stre
 
 1. Install dependencies:
    ```bash
-   npm install
+   pnpm install
    ```
 
 2. Copy environment file:
@@ -38,5 +38,5 @@ The frontend application for **Rhitta** — a real-time decentralized music stre
 
 4. Run the development server:
    ```bash
-   npm run dev
+   pnpm run dev
    ```
