@@ -1,7 +1,6 @@
 #![no_std]
-use soroban_sdk::{
-    contract, contractevent, contractimpl, contracttype, Address, Env, String,
-};
+#![allow(clippy::too_many_arguments)]
+use soroban_sdk::{contract, contractevent, contractimpl, contracttype, Address, Env, String};
 
 #[contracttype]
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -44,6 +43,7 @@ pub struct SongPlayedEvent {
 pub struct RhittaMusicContract;
 
 #[contractimpl]
+#[allow(clippy::too_many_arguments)]
 impl RhittaMusicContract {
     /// Initialize the contract with an admin address.
     pub fn init(env: Env, admin: Address) {
@@ -55,6 +55,7 @@ impl RhittaMusicContract {
     }
 
     /// Publish a new song on Stellar/Soroban.
+    #[allow(clippy::too_many_arguments)]
     pub fn publish_song(
         env: Env,
         artist: Address,
@@ -94,7 +95,9 @@ impl RhittaMusicContract {
             .unwrap_or(0);
 
         env.storage().persistent().set(&song_key, &song);
-        env.storage().persistent().set(&DataKey::SongIndex(count), &id);
+        env.storage()
+            .persistent()
+            .set(&DataKey::SongIndex(count), &id);
 
         count += 1;
         env.storage().instance().set(&DataKey::SongCount, &count);
@@ -136,7 +139,10 @@ impl RhittaMusicContract {
 
     /// Get total count of songs published.
     pub fn get_song_count(env: Env) -> u32 {
-        env.storage().instance().get(&DataKey::SongCount).unwrap_or(0)
+        env.storage()
+            .instance()
+            .get(&DataKey::SongCount)
+            .unwrap_or(0)
     }
 
     /// Retrieve a song by zero-based catalog index.

@@ -8,38 +8,38 @@ import { addNotification } from "./notifications";
 
 // Example: Add a simple info notification
 export const showInfoNotification = () => {
-	addNotification(
-		"Welcome!",
-		"Thanks for using Rhitta music streaming platform",
-		"info"
-	);
+  addNotification(
+    "Welcome!",
+    "Thanks for using Rhitta music streaming platform",
+    "info",
+  );
 };
 
 // Example: Add a success notification
 export const showSuccessNotification = () => {
-	addNotification(
-		"Song Added",
-		"Your favorite song has been added to the queue",
-		"success"
-	);
+  addNotification(
+    "Song Added",
+    "Your favorite song has been added to the queue",
+    "success",
+  );
 };
 
 // Example: Add a warning notification
 export const showWarningNotification = () => {
-	addNotification(
-		"Low Volume",
-		"Your volume is set very low. You might not hear the music",
-		"warning"
-	);
+  addNotification(
+    "Low Volume",
+    "Your volume is set very low. You might not hear the music",
+    "warning",
+  );
 };
 
 // Example: Add an error notification
 export const showErrorNotification = () => {
-	addNotification(
-		"Playback Error",
-		"Unable to play this song. Please try again later",
-		"error"
-	);
+  addNotification(
+    "Playback Error",
+    "Unable to play this song. Please try again later",
+    "error",
+  );
 };
 
 /**

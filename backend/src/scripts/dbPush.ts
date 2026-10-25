@@ -2,22 +2,20 @@ import "../loadEnv.ts";
 import { createClient } from "@libsql/client";
 
 export async function pushSchemaToDatabase() {
-	const rawUrl =
-		process.env.TURSO_DATABASE_URL ||
-		process.env.DATABASE_URL ||
-		"file:dev.db";
+  const rawUrl =
+    process.env.TURSO_DATABASE_URL || process.env.DATABASE_URL || "file:dev.db";
 
-	// Convert libsql:// to https:// for stateless HTTP transport (avoids hanging WebSocket handshakes in cloud containers)
-	const url = rawUrl.startsWith("libsql://")
-		? rawUrl.replace(/^libsql:\/\//, "https://")
-		: rawUrl;
+  // Convert libsql:// to https:// for stateless HTTP transport (avoids hanging WebSocket handshakes in cloud containers)
+  const url = rawUrl.startsWith("libsql://")
+    ? rawUrl.replace(/^libsql:\/\//, "https://")
+    : rawUrl;
 
-	const authToken = process.env.TURSO_AUTH_TOKEN || undefined;
+  const authToken = process.env.TURSO_AUTH_TOKEN || undefined;
 
-	console.log(`[Database Init] Connecting to: ${url}`);
-	const client = createClient({ url, authToken });
+  console.log(`[Database Init] Connecting to: ${url}`);
+  const client = createClient({ url, authToken });
 
-	const createSongsTable = `
+  const createSongsTable = `
 		CREATE TABLE IF NOT EXISTS "songs" (
 			"id" TEXT NOT NULL PRIMARY KEY,
 			"title" TEXT NOT NULL,
@@ -37,22 +35,27 @@ export async function pushSchemaToDatabase() {
 		);
 	`;
 
-	const timeoutPromise = new Promise((_, reject) =>
-		setTimeout(() => reject(new Error("Database init timed out after 8s")), 8000)
-	);
+  const timeoutPromise = new Promise((_, reject) =>
+    setTimeout(
+      () => reject(new Error("Database init timed out after 8s")),
+      8000,
+    ),
+  );
 
-	await Promise.race([client.execute(createSongsTable), timeoutPromise]);
-	console.log("✅ Successfully initialized and verified 'songs' table in database!");
+  await Promise.race([client.execute(createSongsTable), timeoutPromise]);
+  console.log(
+    "✅ Successfully initialized and verified 'songs' table in database!",
+  );
 }
 
 // Auto-run if executed directly via CLI
 if (process.argv[1] && process.argv[1].endsWith("dbPush.ts")) {
-	pushSchemaToDatabase()
-		.then(() => {
-			process.exit(0);
-		})
-		.catch((err) => {
-			console.error("❌ Failed to initialize database tables:", err);
-			process.exit(1);
-		});
+  pushSchemaToDatabase()
+    .then(() => {
+      process.exit(0);
+    })
+    .catch((err) => {
+      console.error("❌ Failed to initialize database tables:", err);
+      process.exit(1);
+    });
 }

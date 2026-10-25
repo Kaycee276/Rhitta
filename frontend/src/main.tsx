@@ -11,11 +11,11 @@ window.Buffer = Buffer;
 const queryClient = new QueryClient();
 
 createRoot(document.getElementById("root")!).render(
-	<StrictMode>
-		<StellarWalletProvider>
-			<QueryClientProvider client={queryClient}>
-				<App />
-			</QueryClientProvider>
-		</StellarWalletProvider>
-	</StrictMode>
+  <StrictMode>
+    <StellarWalletProvider>
+      <QueryClientProvider client={queryClient}>
+        <App />
+      </QueryClientProvider>
+    </StellarWalletProvider>
+  </StrictMode>,
 );

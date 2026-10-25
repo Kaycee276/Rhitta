@@ -19,13 +19,13 @@ app.use("/", uploadRoutes);
 app.use("/", publish);
 
 app.get("/health", (_req: Request, res: Response) =>
-	res.json({ status: "ok" })
+  res.json({ status: "ok" }),
 );
 
 const PORT = process.env.PORT ? Number(process.env.PORT) : 4000;
 server.listen(PORT, "0.0.0.0", () => {
-	console.log(`Server listening on http://0.0.0.0:${PORT}`);
-	pushSchemaToDatabase().catch((err) => {
-		console.error("Database table initialization notice:", err.message);
-	});
+  console.log(`Server listening on http://0.0.0.0:${PORT}`);
+  pushSchemaToDatabase().catch((err) => {
+    console.error("Database table initialization notice:", err.message);
+  });
 });

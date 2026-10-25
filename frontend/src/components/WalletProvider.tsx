@@ -1,5 +1,6 @@
+/* eslint-disable react-refresh/only-export-components */
 export {
-	StellarWalletProvider,
-	useStellarWallet,
-	useAccount,
+  StellarWalletProvider,
+  useStellarWallet,
+  useAccount,
 } from "../context/StellarWalletContext";

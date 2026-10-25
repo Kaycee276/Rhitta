@@ -18,55 +18,55 @@ const AddSong = lazy(() => import("./pages/AddSong"));
 import { subscribe } from "./services/stellar";
 
 const App = () => {
-	const { playerState } = usePlayerStore();
-	const { toasts, removeToast } = useToastStore();
-	useEffect(() => {
-		let stopFn: (() => void) | undefined;
+  const { playerState } = usePlayerStore();
+  const { toasts, removeToast } = useToastStore();
+  useEffect(() => {
+    let stopFn: (() => void) | undefined;
 
-		(async () => {
-			try {
-				const stop = await subscribe();
-				if (typeof stop === "function") stopFn = stop;
-			} catch (err) {
-				console.error("Failed to start Stellar subscribe:", err);
-			}
-		})();
+    (async () => {
+      try {
+        const stop = await subscribe();
+        if (typeof stop === "function") stopFn = stop;
+      } catch (err) {
+        console.error("Failed to start Stellar subscribe:", err);
+      }
+    })();
 
-		return () => {
-			stopFn?.();
-		};
-	}, []);
+    return () => {
+      stopFn?.();
+    };
+  }, []);
 
-	return (
-		<Router>
-			<div className="flex h-screen bg-(--bg) text-(--text) overflow-hidden">
-				<Sidebar />
-				<div className="flex-1 flex flex-col overflow-hidden">
-					<Header />
-					<main className="flex-1 overflow-y-auto pb-32 md:pb-24">
-						<Suspense fallback={<Loader />}>
-							<Routes>
-								<Route path="/" element={<Home />} />
-								<Route path="/discover" element={<Discover />} />
-								{/* <Route path="/trending" element={<Trending />} /> */}
-								<Route path="/library" element={<Library />} />
-								<Route path="/add-song" element={<AddSong />} />
-							</Routes>
-						</Suspense>
-					</main>
-				</div>
-				{playerState.currentSong && <MusicPlayer />}
-				{toasts.map((toast) => (
-					<Toast
-						key={toast.id}
-						message={toast.message}
-						type={toast.type}
-						onClose={() => removeToast(toast.id)}
-					/>
-				))}
-			</div>
-		</Router>
-	);
+  return (
+    <Router>
+      <div className="flex h-screen bg-(--bg) text-(--text) overflow-hidden">
+        <Sidebar />
+        <div className="flex-1 flex flex-col overflow-hidden">
+          <Header />
+          <main className="flex-1 overflow-y-auto pb-32 md:pb-24">
+            <Suspense fallback={<Loader />}>
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/discover" element={<Discover />} />
+                {/* <Route path="/trending" element={<Trending />} /> */}
+                <Route path="/library" element={<Library />} />
+                <Route path="/add-song" element={<AddSong />} />
+              </Routes>
+            </Suspense>
+          </main>
+        </div>
+        {playerState.currentSong && <MusicPlayer />}
+        {toasts.map((toast) => (
+          <Toast
+            key={toast.id}
+            message={toast.message}
+            type={toast.type}
+            onClose={() => removeToast(toast.id)}
+          />
+        ))}
+      </div>
+    </Router>
+  );
 };
 
 export default App;
