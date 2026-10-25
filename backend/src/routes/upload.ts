@@ -10,7 +10,7 @@ import express from "express";
 import cors from "cors";
 import type { Request, Response } from "express";
 import multer from "multer";
-import { supabase } from "../utils/supabase.ts";
+import prisma from "../utils/prisma.ts";
 
 const app = express();
 app.use(cors());
@@ -87,36 +87,38 @@ app.post(
 
 			const songId = payload.id || `song-${Date.now()}`;
 
-			const songData = {
-				id: songId,
-				title: payload.title,
-				artist: payload.artist || null,
-				artist_id: payload.artistId || null,
-				genre: payload.genre || null,
-				cover_art: coverArtUploadResult.url || null,
-				audio_url: audioUploadResult.url,
-				duration: duration,
-				price: payload.price || 0,
-				release_date: payload.releaseDate || null,
-				metadata: payload.metadata || {},
-				received_at: new Date().toISOString(),
-				created_at: new Date().toISOString(),
-				updated_at: new Date().toISOString(),
-			};
-
-			const { data: insertedSong, error } = await supabase
-				.from("songs")
-				.insert([songData])
-				.select()
-				.single();
+			const insertedSong = await prisma.song.create({
+				data: {
+					id: songId,
+					title: payload.title,
+					artist: payload.artist || null,
+					artistId: payload.artistId || null,
+					genre: payload.genre || null,
+					coverArt: coverArtUploadResult.url || null,
+					audioUrl: audioUploadResult.url,
+					duration,
+					price: Number(payload.price) || 0,
+					releaseDate: payload.releaseDate || null,
+					metadata:
+						typeof payload.metadata === "object"
+							? JSON.stringify(payload.metadata)
+							: payload.metadata || null,
+				},
+			});
 
 			if (insertedSong) {
-				await publishSong(insertedSong);
+				await publishSong({
+					id: insertedSong.id,
+					title: insertedSong.title,
+					artist: insertedSong.artist || undefined,
+					artist_id: insertedSong.artistId || undefined,
+					cover_art: insertedSong.coverArt || undefined,
+					audio_url: insertedSong.audioUrl,
+					genre: insertedSong.genre || undefined,
+					duration: insertedSong.duration,
+					price: insertedSong.price,
+				});
 				await markSongAsPublished(insertedSong.id);
-			}
-			if (error) {
-				console.error("Supabase insert error:", error);
-				throw new Error(`Database insert failed: ${error.message}`);
 			}
 
 			const receivedSong: ReceivedSong = {

@@ -2,6 +2,9 @@ node_modules/
 dist/
 .env
 .env.local
+*.db
+*.db-journal
+uploads/
 target/
 contracts/target/
 .soroban/

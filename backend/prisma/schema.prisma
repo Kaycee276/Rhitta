@@ -1,0 +1,27 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Song {
+  id          String   @id
+  title       String
+  artist      String?
+  artistId    String?  @map("artist_id")
+  genre       String?
+  coverArt    String?  @map("cover_art")
+  audioUrl    String   @map("audio_url")
+  duration    Float    @default(0)
+  price       Float    @default(0)
+  releaseDate String?  @map("release_date")
+  metadata    String?
+  published   Boolean  @default(false)
+  receivedAt  DateTime @default(now()) @map("received_at")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("songs")
+}

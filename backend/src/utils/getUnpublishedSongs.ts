@@ -1,21 +1,16 @@
-import { supabase } from "./supabase.ts";
+import prisma from "./prisma.ts";
 
 export async function getUnpublishedSongs(): Promise<any[]> {
 	try {
-		const { data: songs, error } = await supabase
-			.from("songs")
-			.select("*")
-			.order("created_at", { ascending: true });
+		const songs = await prisma.song.findMany({
+			where: { published: false },
+			orderBy: { createdAt: "asc" },
+		});
 
-		if (error) {
-			console.error("Error fetching songs from Supabase:", error);
-			throw error;
-		}
-
-		console.log(`Fetched ${songs?.length || 0} songs from Supabase`);
-		return songs || [];
+		console.log(`Fetched ${songs.length} unpublished songs from database`);
+		return songs;
 	} catch (error) {
-		console.error("Failed to fetch songs from Supabase:", error);
+		console.error("Failed to fetch songs from database:", error);
 		return [];
 	}
 }
