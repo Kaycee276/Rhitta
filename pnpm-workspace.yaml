@@ -1,6 +1,7 @@
 packages:
   - backend
   - frontend
+dangerouslyAllowAllBuilds: true
 onlyBuiltDependencies:
   - '@prisma/client'
   - '@prisma/engines'

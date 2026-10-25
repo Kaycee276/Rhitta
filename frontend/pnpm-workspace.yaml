@@ -1,3 +1,4 @@
+dangerouslyAllowAllBuilds: true
 onlyBuiltDependencies:
   - esbuild
 minimumReleaseAgeExclude:

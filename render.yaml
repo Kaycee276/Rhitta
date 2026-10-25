@@ -8,7 +8,7 @@ services:
     plan: free
     region: oregon
     rootDir: backend
-    buildCommand: corepack enable && pnpm install && pnpm run build
+    buildCommand: corepack enable && pnpm install --config.dangerously-allow-all-builds=true && pnpm run build
     startCommand: pnpm run start
     healthCheckPath: /health
     autoDeploy: true
