@@ -8,7 +8,9 @@ export const STELLAR_HORIZON_URL =
 	process.env.STELLAR_HORIZON_URL || "https://horizon-testnet.stellar.org";
 export const STELLAR_SOROBAN_RPC_URL =
 	process.env.STELLAR_SOROBAN_RPC_URL || "https://soroban-testnet.stellar.org";
-export const STELLAR_CONTRACT_ID = process.env.STELLAR_CONTRACT_ID || "";
+export const STELLAR_CONTRACT_ID =
+	process.env.STELLAR_CONTRACT_ID ||
+	"CBQU2AB6ZEGNCMMXPPXOMGCHFXEBGU3EL7OC2PSLDTI4JKE5GT6XCPDC";
 
 export const horizonServer = new Horizon.Server(STELLAR_HORIZON_URL);
 export const rpcServer = new rpc.Server(STELLAR_SOROBAN_RPC_URL);

@@ -107,6 +107,14 @@ By building on Stellar, Rhitta benefits from:
 
 The Soroban contracts are located in the [`contracts/`](file:///home/kaycee/Desktop/Personal/Rhitta/contracts) directory.
 
+### Deployed Contract (Stellar Testnet)
+
+- **Contract ID**: [`CBQU2AB6ZEGNCMMXPPXOMGCHFXEBGU3EL7OC2PSLDTI4JKE5GT6XCPDC`](https://stellar.expert/explorer/testnet/contract/CBQU2AB6ZEGNCMMXPPXOMGCHFXEBGU3EL7OC2PSLDTI4JKE5GT6XCPDC)
+- **WASM Hash**: `09d8412cf7c6f1c2733c04dac95de924ee1dd6ce02840606db0decddc44c24df`
+- **Deployment Transaction**: [`fd6ef411...51d77803`](https://stellar.expert/explorer/testnet/tx/fd6ef41159a0d8f44c8f5da9d4764e2eea51ae9fee01b17b35bb145851d77803)
+- **Admin Account**: `GBELXTVUSO745SBIL6OINE3FR3YB4BTXKOL5BY7LK6GC5AOQJCZOVMBX`
+- **Stellar Lab**: [Explore on Stellar Lab](https://lab.stellar.org/r/testnet/contract/CBQU2AB6ZEGNCMMXPPXOMGCHFXEBGU3EL7OC2PSLDTI4JKE5GT6XCPDC)
+
 ### Contract Methods (`RhittaMusicContract`)
 
 | Method | Parameters | Description |
