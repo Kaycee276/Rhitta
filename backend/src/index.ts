@@ -23,11 +23,9 @@ app.get("/health", (_req: Request, res: Response) =>
 );
 
 const PORT = process.env.PORT ? Number(process.env.PORT) : 4000;
-server.listen(PORT, async () => {
-	console.log(`Server listening on http://localhost:${PORT}`);
-	try {
-		await pushSchemaToDatabase();
-	} catch (err) {
-		console.error("Database table initialization notice:", err);
-	}
+server.listen(PORT, "0.0.0.0", () => {
+	console.log(`Server listening on http://0.0.0.0:${PORT}`);
+	pushSchemaToDatabase().catch((err) => {
+		console.error("Database table initialization notice:", err.message);
+	});
 });

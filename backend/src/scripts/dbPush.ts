@@ -2,10 +2,16 @@ import "../loadEnv.ts";
 import { createClient } from "@libsql/client";
 
 export async function pushSchemaToDatabase() {
-	const url =
+	const rawUrl =
 		process.env.TURSO_DATABASE_URL ||
 		process.env.DATABASE_URL ||
 		"file:dev.db";
+
+	// Convert libsql:// to https:// for stateless HTTP transport (avoids hanging WebSocket handshakes in cloud containers)
+	const url = rawUrl.startsWith("libsql://")
+		? rawUrl.replace(/^libsql:\/\//, "https://")
+		: rawUrl;
+
 	const authToken = process.env.TURSO_AUTH_TOKEN || undefined;
 
 	console.log(`[Database Init] Connecting to: ${url}`);
@@ -31,7 +37,11 @@ export async function pushSchemaToDatabase() {
 		);
 	`;
 
-	await client.execute(createSongsTable);
+	const timeoutPromise = new Promise((_, reject) =>
+		setTimeout(() => reject(new Error("Database init timed out after 8s")), 8000)
+	);
+
+	await Promise.race([client.execute(createSongsTable), timeoutPromise]);
 	console.log("✅ Successfully initialized and verified 'songs' table in database!");
 }
 
