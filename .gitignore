@@ -10,3 +10,4 @@ contracts/target/
 .soroban/
 .stellar/
 .DS_Store
+osswc-issues-gen/
