@@ -30,6 +30,7 @@
 		"ws": "^8.22.0"
 	},
 	"devDependencies": {
+		"@types/cors": "^2.8.19",
 		"@types/express": "^4.17.17",
 		"@types/multer": "^1.4.7",
 		"@types/node": "^20.4.2",
@@ -38,13 +39,5 @@
 		"prisma": "^6.4.1",
 		"ts-node-dev": "^2.0.0",
 		"typescript": "^5.1.6"
-	},
-	"pnpm": {
-		"onlyBuiltDependencies": [
-			"@prisma/client",
-			"@prisma/engines",
-			"esbuild",
-			"prisma"
-		]
 	}
 }

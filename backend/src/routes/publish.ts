@@ -1,13 +1,10 @@
 import { publishAllSongsFromDatabase } from "../services/stellar/publishSongsFromDatabase.ts";
 import express from "express";
-import cors from "cors";
 import type { Request, Response } from "express";
 
-const app = express();
-app.use(cors());
-app.use(express.json());
+const router = express.Router();
 
-app.post("/publish-songs", async (_req: Request, res: Response) => {
+router.post("/publish-songs", async (_req: Request, res: Response) => {
   try {
     const result = await publishAllSongsFromDatabase();
     res.json({
@@ -23,4 +20,4 @@ app.post("/publish-songs", async (_req: Request, res: Response) => {
   }
 });
 
-export default app;
+export default router;

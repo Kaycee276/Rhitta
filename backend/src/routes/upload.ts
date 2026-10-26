@@ -7,14 +7,11 @@ import { generateFileName } from "../utils/generateFileName.ts";
 import { markSongAsPublished } from "../services/stellar/publishSongsFromSupabase.ts";
 import { formatDate } from "../utils/formatDate.ts";
 import express from "express";
-import cors from "cors";
 import type { Request, Response } from "express";
 import multer from "multer";
 import prisma from "../utils/prisma.ts";
 
-const app = express();
-app.use(cors());
-app.use(express.json());
+const router = express.Router();
 
 const receivedSongs: ReceivedSong[] = [];
 const upload = multer({
@@ -24,7 +21,7 @@ const upload = multer({
   },
 });
 
-app.post(
+router.post(
   "/new-upload",
   upload.fields([
     { name: "audioFile", maxCount: 1 },
@@ -156,8 +153,8 @@ app.post(
   },
 );
 
-app.get("/events", (_req: Request, res: Response) => {
+router.get("/events", (_req: Request, res: Response) => {
   res.json({ data: receivedSongs });
 });
 
-export default app;
+export default router;

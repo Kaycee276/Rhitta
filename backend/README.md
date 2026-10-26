@@ -30,6 +30,7 @@ Backend service for Rhitta that bridges song management, Prisma ORM with Turso (
    - `STELLAR_SECRET_KEY`: Stellar secret key (`S...`)
    - `STELLAR_PUBLIC_KEY`: Stellar public key (`G...`)
    - `STELLAR_CONTRACT_ID`: (Optional) Deployed Soroban contract ID
+   - `ALLOWED_ORIGINS`: (Optional) Comma-separated list of permitted CORS origins (defaults to `*` if unset)
 
 4. Push schema to your database:
    ```bash

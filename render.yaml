@@ -23,6 +23,9 @@ services:
         value: https://soroban-testnet.stellar.org
       - key: STELLAR_NETWORK_PASSPHRASE
         value: "Test SDF Network ; September 2015"
+      # CORS: Comma-separated list of allowed origins (e.g., https://your-frontend.vercel.app)
+      - key: ALLOWED_ORIGINS
+        sync: false
       # Turso (SQLite Cloud DB) credentials
       - key: TURSO_DATABASE_URL
         sync: false
